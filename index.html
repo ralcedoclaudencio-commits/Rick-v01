@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Rick</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,sans-serif;background:#0a0e1a;color:#e0e0e0;min-height:100vh;position:relative;overflow-x:hidden}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:url('https://images.unsplash.com/photo-1578632292335-df3abbb0d586?w=800&q=80') center/cover;opacity:0.25;z-index:-1}
+.header{display:flex;justify-content:space-between;align-items:center;padding:52px 20px 10px;backdrop-filter:blur(10px)}
+.header-icons{display:flex;gap:16px}
+.header-icons button,.settings-btn{background:rgba(30,30,40,0.7);border:1px solid rgba(255,255,255,0.1);cursor:pointer;color:#aaa;font-size:22px;padding:8px;border-radius:8px;backdrop-filter:blur(10px)}
+.header-icons button:active,.settings-btn:active{transform:scale(0.95)}
+.title-section{padding:18px 24px 4px}
+.title-section h1{font-size:42px;font-weight:200;color:#fff;letter-spacing:2px;text-shadow:0 0 20px rgba(91,127,255,0.5)}
+.title-section p{font-size:13px;color:#888;margin-top:2px}
+.input-section{padding:20px}
+.input-wrapper{position:relative;border:1.5px solid rgba(91,127,255,0.3);border-radius:12px;padding:14px 44px 14px 16px;background:rgba(20,25,35,0.8);backdrop-filter:blur(10px);margin-bottom:16px}
+.input-wrapper:focus-within{border-color:#5b7fff;box-shadow:0 0 20px rgba(91,127,255,0.3)}
+.input-wrapper label{position:absolute;top:-9px;left:12px;background:rgba(10,14,26,0.95);padding:0 6px;font-size:11px;font-weight:500}
+.input-wrapper.yt label{color:#ff0000}
+.input-wrapper.tt label{color:#00f2ea}
+.input-wrapper.fb label{color:#1877f2}
+.input-wrapper input{width:100%;background:0 0;border:none;color:#e0e0e0;font-size:14px;outline:0}
+.clear-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:rgba(60,60,70,0.8);border:none;color:#aaa;width:24px;height:24px;border-radius:50%;cursor:pointer;opacity:0}
+.input-wrapper.has-value .clear-btn{opacity:1}
+.card-section{padding:22px 20px 0;display:none}
+.card-section.visible{display:block}
+.video-card{background:rgba(30,35,45,0.9);border-radius:14px;overflow:hidden;border:1px solid rgba(91,127,255,0.2);backdrop-filter:blur(10px)}
+.thumb-container{position:relative;width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#1a1a2e,#16213e)}
+.thumb-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#444;font-size:48px}
+.cancel-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.7);border:2px solid rgba(255,255,255,.3);color:#fff;font-size:20px;cursor:pointer;backdrop-filter:blur(5px)}
+.badge{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.85);padding:4px 8px;border-radius:6px;font-size:11px;color:#ddd;font-weight:500;backdrop-filter:blur(5px)}
+.card-info{padding:12px 14px 14px}
+.card-title{font-size:14px;color:#e0e0e0;font-weight:500;margin-bottom:4px}
+.card-author{font-size:12px;color:#888}
+.progress-bar-bg{height:4px;background:rgba(40,40,50,0.9);border-radius:2px;margin-top:10px}
+.progress-bar{height:100%;width:0;background:linear-gradient(90deg,#5b7fff,#8b9fff);border-radius:2px;transition:width .4s}
+.fab-container{position:fixed;bottom:30px;right:20px;display:flex;flex-direction:column;gap:14px;z-index:50}
+.fab{width:52px;height:52px;border-radius:16px;border:none;cursor:pointer;font-size:22px;color:#fff;box-shadow:0 8px 24px rgba(91,127,255,0.5)}
+.fab.clipboard{background:linear-gradient(135deg,#3a4f8f,#5b7fff)}
+.fab.download{background:linear-gradient(135deg,#5b7fff,#8b9fff)}
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(40,40,50,0.95);backdrop-filter:blur(10px);color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;opacity:0;transition:all .3s;z-index:200;pointer-events:none;border:1px solid rgba(91,127,255,0.3)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);backdrop-filter:blur(10px);z-index:100;display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:20px 0}
+.modal.show{display:flex}
+.modal-content{background:rgba(15,20,30,0.98);border-radius:20px;padding:24px;width:95%;max-width:500px;border:1px solid rgba(91,127,255,0.2);margin-top:40px;margin-bottom:40px}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+.modal-header h2{font-size:24px;font-weight:300;color:#fff}
+.close-btn{background:rgba(60,60,70,0.8);border:none;color:#aaa;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:18px}
+.setting-item{padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.1);cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.setting-item:last-child{border-bottom:none}
+.setting-label{font-size:14px;color:#e0e0e0;display:block}
+.setting-sublabel{font-size:11px;color:#666;margin-top:4px}
+.quality-select{width:100%;background:rgba(30,35,45,0.8);border:1px solid rgba(91,127,255,0.3);border-radius:8px;padding:10px;color:#e0e0e0;font-size:14px;outline:none}
+.platform-tabs{display:flex;gap:8px;margin-bottom:20px;overflow-x:auto;padding-bottom:8px}
+.platform-tab{background:rgba(30,35,45,0.7);border:1px solid rgba(91,127,255,0.2);border-radius:8px;padding:10px 20px;color:#888;font-size:13px;cursor:pointer;white-space:nowrap;transition:all 0.3s}
+.platform-tab.active{background:rgba(91,127,255,0.3);border-color:#5b7fff;color:#fff}
+.video-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.video-item{background:rgba(30,35,45,0.7);border-radius:12px;overflow:hidden;border:1px solid rgba(91,127,255,0.1);cursor:pointer}
+.video-thumb{width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;align-items:center;justify-content:center;color:#444;font-size:32px;position:relative}
+.video-duration{position:absolute;bottom:4px;right:4px;background:rgba(0,0,0,0.8);padding:2px 6px;border-radius:4px;font-size:10px;color:#fff}
+.video-info{padding:8px}
+.video-name{font-size:12px;color:#e0e0e0;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:4px}
+.video-size{font-size:10px;color:#666}
+.empty-state{text-align:center;padding:40px 20px;color:#666}
+.setting-arrow{color:#666;font-size:18px}
+.form-group{margin-bottom:16px}
+.form-label{font-size:13px;color:#e0e0e0;margin-bottom:8px;display:block}
+.form-input,.form-textarea{width:100%;background:rgba(30,35,45,0.8);border:1px solid rgba(91,127,255,0.3);border-radius:8px;padding:10px;color:#e0e0e0;font-size:14px;outline:none;font-family:inherit}
+.form-input:focus,.form-textarea:focus{border-color:#5b7fff}
+.form-textarea{min-height:120px;resize:vertical}
+.submit-btn{width:100%;background:linear-gradient(135deg,#5b7fff,#8b9fff);border:none;border-radius:10px;padding:14px;color:#fff;font-size:15px;font-weight:500;cursor:pointer;transition:transform 0.2s}
+.submit-btn:active{transform:scale(0.98)}
+.submit-btn:disabled{opacity:0.5;cursor:not-allowed}
+</style>
+</head>
+<body>
+<div class="header">
+<button class="settings-btn" onclick="openSettings()">⚙️</button>
+<div class="header-icons">
+<button onclick="openHistory()">📋</button>
+<button onclick="openFolder()">📁</button>
+</div>
+</div>
+<div class="title-section">
+<h1>Rick</h1>
+<p>Descarga sin marca de agua</p>
+</div>
+<div class="input-section">
+<div class="input-wrapper yt" id="inputWrapperYT">
+<label>▶️ YouTube</label>
+<input type="text" id="urlInputYT" placeholder="https://youtube.com/..." oninput="onInput(0)"/>
+<button class="clear-btn" onclick="clearInput(0)">✕</button>
+</div>
+<div class="input-wrapper tt" id="inputWrapperTT">
+<label>♪ TikTok (sin marca)</label>
+<input type="text" id="urlInputTT" placeholder="https://tiktok.com/..." oninput="onInput(1)"/>
+<button class="clear-btn" onclick="clearInput(1)">✕</button>
+</div>
+<div class="input-wrapper fb" id="inputWrapperFB">
+<label>f Facebook</label>
+<input type="text" id="urlInputFB" placeholder="https://facebook.com/..." oninput="onInput(2)"/>
+<button class="clear-btn" onclick="clearInput(2)">✕</button>
+</div>
+</div>
+<div class="card-section" id="cardSection">
+<div class="video-card">
+<div class="thumb-container">
+<div class="thumb-placeholder" id="platformIcon">▶</div>
+<button class="cancel-btn" onclick="cancelDownload()">✕</button>
+<div class="badge" id="videoBadge">0%</div>
+</div>
+<div class="card-info">
+<div class="card-title" id="videoTitle">Descargando...</div>
+<div class="card-author" id="videoAuthor">0 MB/s</div>
+<div class="progress-bar-bg"><div class="progress-bar" id="progressBar"></div></div>
+</div>
+</div>
+</div>
+<div class="fab-container">
+<button class="fab clipboard" onclick="pasteClipboard()">📋</button>
+<button class="fab download" onclick="startDownload()">⬇</button>
+</div>
+<div class="toast" id="toast"></div>
+<div class="modal" id="settingsModal">
+<div class="modal-content">
+<div class="modal-header">
+<h2>Ajustes</h2>
+<button class="close-btn" onclick="closeSettings()">✕</button>
+</div>
+<div class="setting-item" onclick="openDownloads()">
+<div>
+<div class="setting-label">Mis descargas</div>
+<div class="setting-sublabel">Ver videos descargados</div>
+</div>
+<span class="setting-arrow">›</span>
+</div>
+<div class="setting-item" onclick="openSupport()">
+<div>
+<div class="setting-label">Atención al cliente</div>
+<div class="setting-sublabel">Reportar problemas o sugerencias</div>
+</div>
+<span class="setting-arrow">›</span>
+</div>
+<div class="setting-item">
+<div>
+<label class="setting-label">Calidad de video</label>
+<select class="quality-select" id="qualitySelect" onchange="saveQuality()" onclick="event.stopPropagation()">
+<option value="best">Mejor calidad (HD)</option>
+<option value="1080p">1080p</option>
+<option value="720p">720p</option>
+<option value="480p">480p</option>
+<option value="360p">360p</option>
+</select>
+</div>
+</div>
+</div>
+</div>
+<div class="modal" id="supportModal">
+<div class="modal-content">
+<div class="modal-header">
+<h2>Atención al cliente</h2>
+<button class="close-btn" onclick="closeSupport()">✕</button>
+</div>
+<div class="form-group">
+<label class="form-label">Tu nombre</label>
+<input type="text" class="form-input" id="supportName" placeholder="Nombre completo">
+</div>
+<div class="form-group">
+<label class="form-label">Tu correo electrónico</label>
+<input type="email" class="form-input" id="supportEmail" placeholder="correo@ejemplo.com">
+</div>
+<div class="form-group">
+<label class="form-label">Asunto</label>
+<input type="text" class="form-input" id="supportSubject" placeholder="¿En qué podemos ayudarte?">
+</div>
+<div class="form-group">
+<label class="form-label">Mensaje</label>
+<textarea class="form-textarea" id="supportMessage" placeholder="Describe tu problema o sugerencia..."></textarea>
+</div>
+<button class="submit-btn" id="supportSubmit" onclick="sendSupportMessage()">Enviar mensaje</button>
+</div>
+</div>
+<div class="modal" id="downloadsModal">
+<div class="modal-content">
+<div class="modal-header">
+<h2>Mis descargas</h2>
+<button class="close-btn" onclick="closeDownloads()">✕</button>
+</div>
+<div class="platform-tabs">
+<button class="platform-tab active" onclick="filterPlatform('Todos')">Todos</button>
+<button class="platform-tab" onclick="filterPlatform('YouTube')">▶️ YouTube</button>
+<button class="platform-tab" onclick="filterPlatform('TikTok')">♪ TikTok</button>
+<button class="platform-tab" onclick="filterPlatform('Facebook')">f Facebook</button>
+</div>
+<div id="downloadsList" class="video-grid"></div>
+</div>
+</div>
+<div class="modal" id="historyModal">
+<div class="modal-content">
+<div class="modal-header">
+<h2>Historial</h2>
+<button class="close-btn" onclick="closeHistory()">✕</button>
+</div>
+<div id="historyList"></div>
+</div>
+</div>
+<script>
+const BACKEND_URL='https://rick-backend-9wxe.onrender.com';
+let downloading=false,progressInterval=null,currentFilter='Todos';
+let quality=localStorage.getItem('videoQuality')||'best';
+document.getElementById('qualitySelect').value=quality;
+const inputs=['urlInputYT','urlInputTT','urlInputFB'];
+const wrappers=['inputWrapperYT','inputWrapperTT','inputWrapperFB'];
+function onInput(i){document.getElementById(wrappers[i]).classList.toggle('has-value',document.getElementById(inputs[i]).value.length>0)}
+function clearInput(i){document.getElementById(inputs[i]).value='';document.getElementById(wrappers[i]).classList.remove('has-value');document.getElementById('cardSection').classList.remove('visible');showToast('Eliminado')}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
+function openSettings(){document.getElementById('settingsModal').classList.add('show')}
+function closeSettings(){document.getElementById('settingsModal').classList.remove('show')}
+function saveQuality(){quality=document.getElementById('qualitySelect').value;localStorage.setItem('videoQuality',quality);showToast('Calidad: '+quality)}
+function openSupport(){closeSettings();document.getElementById('supportModal').classList.add('show')}
+function closeSupport(){document.getElementById('supportModal').classList.remove('show')}
+async function sendSupportMessage(){
+const name=document.getElementById('supportName').value.trim();
+const email=document.getElementById('supportEmail').value.trim();
+const subject=document.getElementById('supportSubject').value.trim();
+const message=document.getElementById('supportMessage').value.trim();
+if(!name||!email||!subject||!message){showToast('Completa todos los campos');return}
+const btn=document.getElementById('supportSubmit');
+btn.disabled=true;btn.textContent='Enviando...';
+try{
+const res=await fetch(BACKEND_URL+'/support',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,subject,message})});
+const data=await res.json();
+if(data.success){showToast('Mensaje enviado ✓');document.getElementById('supportName').value='';document.getElementById('supportEmail').value='';document.getElementById('supportSubject').value='';document.getElementById('supportMessage').value='';setTimeout(()=>closeSupport(),1000)}else{showToast('Error al enviar')}
+}catch(e){showToast('Error de conexión')}
+btn.disabled=false;btn.textContent='Enviar mensaje';
+}
+async function openDownloads(){closeSettings();document.getElementById('downloadsModal').classList.add('show');loadDownloads()}
+function closeDownloads(){document.getElementById('downloadsModal').classList.remove('show')}
+function filterPlatform(platform){currentFilter=platform;document.querySelectorAll('.platform-tab').forEach(tab=>{tab.classList.remove('active');if(tab.textContent.includes(platform)||tab.textContent==='Todos'&&platform==='Todos'){tab.classList.add('active')}});loadDownloads()}
+async function loadDownloads(){
+try{
+const res=await fetch(BACKEND_URL+'/history');
+const history=await res.json();
+const list=document.getElementById('downloadsList');
+let filtered=history;
+if(currentFilter!=='Todos'){filtered=history.filter(item=>item.platform===currentFilter)}
+if(filtered.length===0){list.innerHTML='<div class="empty-state" style="grid-column:1/-1">No hay descargas</div>';return}
+const platformIcons={'YouTube':'▶','TikTok':'♪','Facebook':'f'};
+list.innerHTML=filtered.map(item=>`<div class="video-item"><div class="video-thumb">${platformIcons[item.platform]||'▶'}<div class="video-duration">${item.duration}</div></div><div class="video-info"><div class="video-name" title="${item.title}">${item.title}</div><div class="video-size">${item.size} · ${item.date.split(' ')[0]}</div></div></div>`).join('');
+}catch(e){document.getElementById('downloadsList').innerHTML='<div class="empty-state" style="grid-column:1/-1">Error al cargar</div>'}
+}
+async function openHistory(){
+document.getElementById('historyModal').classList.add('show');
+try{
+const res=await fetch(BACKEND_URL+'/history');
+const history=await res.json();
+const list=document.getElementById('historyList');
+if(history.length===0){list.innerHTML='<div class="empty-state">No hay descargas aún</div>';return}
+list.innerHTML=history.map(item=>`<div style="background:rgba(30,35,45,0.7);border-radius:12px;padding:14px;margin-bottom:12px;border:1px solid rgba(91,127,255,0.1)"><div style="font-size:14px;color:#e0e0e0;font-weight:500;margin-bottom:6px">${item.title}</div><div style="font-size:11px;color:#888;display:flex;gap:12px;flex-wrap:wrap"><span>📁 ${item.size}</span><span>⏱ ${item.duration}</span><span>📅 ${item.date}</span><span>🔹 ${item.platform}</span></div></div>`).join('');
+}catch(e){document.getElementById('historyList').innerHTML='<div class="empty-state">Error</div>'}
+}
+function closeHistory(){document.getElementById('historyModal').classList.remove('show')}
+function openFolder(){window.location.href='file:///storage/emulated/0/DCIM/Rick/'}
+async function pasteClipboard(){
+try{
+const text=await navigator.clipboard.readText();
+if(text){
+if(text.includes('youtube')||text.includes('youtu.be')){document.getElementById('urlInputYT').value=text;onInput(0);showToast('YouTube ✓')}
+else if(text.includes('tiktok')||text.includes('vm.tiktok')){document.getElementById('urlInputTT').value=text;onInput(1);showToast('TikTok ✓')}
+else if(text.includes('facebook')||text.includes('fb.')){document.getElementById('urlInputFB').value=text;onInput(2);showToast('Facebook ✓')}
+}
+}catch(e){showToast('Error')}
+}
+async function startDownload(){
+const urls=[document.getElementById('urlInputYT').value.trim(),document.getElementById('urlInputTT').value.trim(),document.getElementById('urlInputFB').value.trim()];
+const url=urls.find(u=>u);
+if(!url){showToast('Pega enlace');return}
+if(downloading){showToast('Descargando...');return}
+downloading=true;
+const platforms=['YouTube','TikTok','Facebook'];
+const icons=['▶','♪','f'];
+const idx=urls.indexOf(url);
+document.getElementById('platformIcon').textContent=icons[idx];
+document.getElementById('cardSection').classList.add('visible');
+progressInterval=setInterval(updateProgress,500);
+showToast('Descarga iniciada');
+try{
+const res=await fetch(BACKEND_URL+'/download',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url,quality})});
+const data=await res.json();
+clearInterval(progressInterval);
+if(data.success){
+document.getElementById('videoTitle').textContent=data.title;
+document.getElementById('progressBar').style.width='100%';
+document.getElementById('videoBadge').textContent='✓';
+if(data.download_url){
+const a=document.createElement('a');
+a.href=BACKEND_URL+data.download_url;
+a.download=data.filename;
+a.click();
+}
+showToast('¡Descargado!')
+}else{showToast('Error');document.getElementById('cardSection').classList.remove('visible')}
+}catch(e){clearInterval(progressInterval);showToast('Error');document.getElementById('cardSection').classList.remove('visible')}
+downloading=false;
+}
+async function updateProgress(){
+try{
+const res=await fetch(BACKEND_URL+'/progress');
+const data=await res.json();
+if(data.percent){
+document.getElementById('progressBar').style.width=data.percent+'%';
+document.getElementById('videoBadge').textContent=data.percent+'%';
+document.getElementById('videoAuthor').textContent=data.speed;
+}
+}catch(e){}
+}
+function cancelDownload(){clearInterval(progressInterval);document.getElementById('cardSection').classList.remove('visible');downloading=false;showToast('Cancelado')}
+</script>
+</body>
+</html>
