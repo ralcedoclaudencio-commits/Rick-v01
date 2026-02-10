@@ -3,104 +3,130 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Rick</title>
+<meta name="theme-color" content="#0a0e27">
+<title>Rick Pro</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:system-ui,sans-serif;background:#0a0e1a;color:#e0e0e0;min-height:100vh;position:relative;overflow-x:hidden}
-body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:url('https://images.unsplash.com/photo-1578632292335-df3abbb0d586?w=800&q=80') center/cover;opacity:0.25;z-index:-1}
-.header{display:flex;justify-content:space-between;align-items:center;padding:52px 20px 10px;backdrop-filter:blur(10px)}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0e27;color:#e0e0e0;min-height:100vh;position:relative;overflow-x:hidden;user-select:none}
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#0a0e27 0%,#1a1f3a 50%,#0f1729 100%);z-index:-2}
+.snowflake{position:fixed;top:-10px;z-index:-1;color:#fff;font-size:1em;opacity:0.8;animation:fall linear infinite;pointer-events:none}
+@keyframes fall{to{transform:translateY(100vh)}}
+.particle{position:fixed;width:4px;height:4px;border-radius:50%;pointer-events:none;z-index:9999;animation:fadeOut 1s ease-out forwards}
+@keyframes fadeOut{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(0)}}
+.header{display:flex;justify-content:space-between;align-items:center;padding:52px 20px 10px}
 .header-icons{display:flex;gap:16px}
-.header-icons button,.settings-btn{background:rgba(30,30,40,0.7);border:1px solid rgba(255,255,255,0.1);cursor:pointer;color:#aaa;font-size:22px;padding:8px;border-radius:8px;backdrop-filter:blur(10px)}
+.header-icons button,.settings-btn{background:rgba(30,35,50,0.8);border:1px solid rgba(91,127,255,0.2);cursor:pointer;color:#aaa;font-size:22px;padding:10px;border-radius:12px;transition:all 0.2s;box-shadow:0 4px 12px rgba(0,0,0,0.3)}
 .header-icons button:active,.settings-btn:active{transform:scale(0.95)}
-.title-section{padding:18px 24px 4px}
-.title-section h1{font-size:42px;font-weight:200;color:#fff;letter-spacing:2px;text-shadow:0 0 20px rgba(91,127,255,0.5)}
-.title-section p{font-size:13px;color:#888;margin-top:2px}
+.title-section{padding:18px 24px 4px;text-align:center}
+.title-section h1{font-size:48px;font-weight:700;background:linear-gradient(135deg,#5b7fff,#8b9fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:3px;animation:glow 3s ease-in-out infinite}
+@keyframes glow{0%,100%{filter:brightness(1)}50%{filter:brightness(1.2)}}
+.title-section p{font-size:13px;color:#888;margin-top:8px}
+.mode-badge{display:inline-block;background:linear-gradient(135deg,#ff6b00,#ff9500);padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;margin-left:8px;color:#000;text-shadow:none}
 .input-section{padding:20px}
-.input-wrapper{position:relative;border:1.5px solid rgba(91,127,255,0.3);border-radius:12px;padding:14px 44px 14px 16px;background:rgba(20,25,35,0.8);backdrop-filter:blur(10px);margin-bottom:16px}
-.input-wrapper:focus-within{border-color:#5b7fff;box-shadow:0 0 20px rgba(91,127,255,0.3)}
-.input-wrapper label{position:absolute;top:-9px;left:12px;background:rgba(10,14,26,0.95);padding:0 6px;font-size:11px;font-weight:500}
+.input-wrapper{position:relative;border:2px solid rgba(91,127,255,0.3);border-radius:14px;padding:14px 44px 14px 16px;background:rgba(20,25,40,0.9);margin-bottom:16px;transition:all 0.3s}
+.input-wrapper:focus-within{border-color:#5b7fff;box-shadow:0 0 24px rgba(91,127,255,0.4)}
+.input-wrapper label{position:absolute;top:-11px;left:12px;background:rgba(10,14,39,0.95);padding:0 8px;font-size:11px;font-weight:600}
 .input-wrapper.yt label{color:#ff0000}
 .input-wrapper.tt label{color:#00f2ea}
 .input-wrapper.fb label{color:#1877f2}
 .input-wrapper input{width:100%;background:0 0;border:none;color:#e0e0e0;font-size:14px;outline:0}
-.clear-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:rgba(60,60,70,0.8);border:none;color:#aaa;width:24px;height:24px;border-radius:50%;cursor:pointer;opacity:0}
+.clear-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:rgba(60,60,80,0.8);border:none;color:#aaa;width:28px;height:28px;border-radius:50%;cursor:pointer;opacity:0;transition:all 0.2s;font-size:14px}
 .input-wrapper.has-value .clear-btn{opacity:1}
 .card-section{padding:22px 20px 0;display:none}
 .card-section.visible{display:block}
-.video-card{background:rgba(30,35,45,0.9);border-radius:14px;overflow:hidden;border:1px solid rgba(91,127,255,0.2);backdrop-filter:blur(10px)}
-.thumb-container{position:relative;width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#1a1a2e,#16213e)}
-.thumb-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#444;font-size:48px}
-.cancel-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.7);border:2px solid rgba(255,255,255,.3);color:#fff;font-size:20px;cursor:pointer;backdrop-filter:blur(5px)}
-.badge{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.85);padding:4px 8px;border-radius:6px;font-size:11px;color:#ddd;font-weight:500;backdrop-filter:blur(5px)}
-.card-info{padding:12px 14px 14px}
-.card-title{font-size:14px;color:#e0e0e0;font-weight:500;margin-bottom:4px}
-.card-author{font-size:12px;color:#888}
-.progress-bar-bg{height:4px;background:rgba(40,40,50,0.9);border-radius:2px;margin-top:10px}
-.progress-bar{height:100%;width:0;background:linear-gradient(90deg,#5b7fff,#8b9fff);border-radius:2px;transition:width .4s}
-.fab-container{position:fixed;bottom:30px;right:20px;display:flex;flex-direction:column;gap:14px;z-index:50}
-.fab{width:52px;height:52px;border-radius:16px;border:none;cursor:pointer;font-size:22px;color:#fff;box-shadow:0 8px 24px rgba(91,127,255,0.5)}
+.video-card{background:rgba(30,35,50,0.95);border-radius:16px;overflow:hidden;border:2px solid rgba(91,127,255,0.3)}
+.thumb-container{position:relative;width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#1a1f3a,#16213e)}
+.thumb-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#444;font-size:52px}
+.cancel-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:48px;height:48px;border-radius:50%;background:rgba(0,0,0,.8);border:2px solid rgba(255,255,255,.4);color:#fff;font-size:22px;cursor:pointer}
+.badge{position:absolute;bottom:12px;right:12px;background:rgba(0,0,0,.9);padding:6px 12px;border-radius:8px;font-size:12px;color:#ddd;font-weight:600}
+.card-info{padding:14px 16px}
+.card-title{font-size:15px;color:#e0e0e0;font-weight:600;margin-bottom:6px}
+.card-author{font-size:13px;color:#888}
+.progress-bar-bg{height:6px;background:rgba(40,40,60,0.9);border-radius:3px;margin-top:12px;overflow:hidden}
+.progress-bar{height:100%;width:0;background:linear-gradient(90deg,#5b7fff,#8b9fff);border-radius:3px;transition:width .4s}
+.fab-container{position:fixed;bottom:30px;right:20px;display:flex;flex-direction:column;gap:16px;z-index:50}
+.fab{width:56px;height:56px;border-radius:18px;border:none;cursor:pointer;font-size:24px;color:#fff;box-shadow:0 8px 24px rgba(91,127,255,0.6);transition:all 0.2s}
+.fab:active{transform:scale(0.95)}
 .fab.clipboard{background:linear-gradient(135deg,#3a4f8f,#5b7fff)}
 .fab.download{background:linear-gradient(135deg,#5b7fff,#8b9fff)}
-.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(40,40,50,0.95);backdrop-filter:blur(10px);color:#fff;padding:10px 20px;border-radius:24px;font-size:13px;opacity:0;transition:all .3s;z-index:200;pointer-events:none;border:1px solid rgba(91,127,255,0.3)}
+.fab.audio{background:linear-gradient(135deg,#ff6b00,#ff9500)}
+.toast{position:fixed;bottom:110px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(40,45,60,0.98);color:#fff;padding:12px 24px;border-radius:28px;font-size:14px;opacity:0;transition:all .3s;z-index:200;pointer-events:none}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);backdrop-filter:blur(10px);z-index:100;display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:20px 0}
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.92);z-index:100;display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:20px 0}
 .modal.show{display:flex}
-.modal-content{background:rgba(15,20,30,0.98);border-radius:20px;padding:24px;width:95%;max-width:500px;border:1px solid rgba(91,127,255,0.2);margin-top:40px;margin-bottom:40px}
+.modal-content{background:rgba(15,20,35,0.98);border-radius:24px;padding:28px;width:95%;max-width:520px;border:2px solid rgba(91,127,255,0.3);margin-top:50px;max-height:85vh;overflow-y:auto}
 .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
-.modal-header h2{font-size:24px;font-weight:300;color:#fff}
-.close-btn{background:rgba(60,60,70,0.8);border:none;color:#aaa;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:18px}
-.setting-item{padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.1);cursor:pointer;display:flex;justify-content:space-between;align-items:center}
-.setting-item:last-child{border-bottom:none}
-.setting-label{font-size:14px;color:#e0e0e0;display:block}
-.setting-sublabel{font-size:11px;color:#666;margin-top:4px}
-.quality-select{width:100%;background:rgba(30,35,45,0.8);border:1px solid rgba(91,127,255,0.3);border-radius:8px;padding:10px;color:#e0e0e0;font-size:14px;outline:none}
-.platform-tabs{display:flex;gap:8px;margin-bottom:20px;overflow-x:auto;padding-bottom:8px}
-.platform-tab{background:rgba(30,35,45,0.7);border:1px solid rgba(91,127,255,0.2);border-radius:8px;padding:10px 20px;color:#888;font-size:13px;cursor:pointer;white-space:nowrap;transition:all 0.3s}
-.platform-tab.active{background:rgba(91,127,255,0.3);border-color:#5b7fff;color:#fff}
-.video-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
-.video-item{background:rgba(30,35,45,0.7);border-radius:12px;overflow:hidden;border:1px solid rgba(91,127,255,0.1);cursor:pointer}
-.video-thumb{width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#1a1a2e,#16213e);display:flex;align-items:center;justify-content:center;color:#444;font-size:32px;position:relative}
-.video-duration{position:absolute;bottom:4px;right:4px;background:rgba(0,0,0,0.8);padding:2px 6px;border-radius:4px;font-size:10px;color:#fff}
-.video-info{padding:8px}
-.video-name{font-size:12px;color:#e0e0e0;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:4px}
-.video-size{font-size:10px;color:#666}
-.empty-state{text-align:center;padding:40px 20px;color:#666}
-.setting-arrow{color:#666;font-size:18px}
-.form-group{margin-bottom:16px}
-.form-label{font-size:13px;color:#e0e0e0;margin-bottom:8px;display:block}
-.form-input,.form-textarea{width:100%;background:rgba(30,35,45,0.8);border:1px solid rgba(91,127,255,0.3);border-radius:8px;padding:10px;color:#e0e0e0;font-size:14px;outline:none;font-family:inherit}
-.form-input:focus,.form-textarea:focus{border-color:#5b7fff}
-.form-textarea{min-height:120px;resize:vertical}
-.submit-btn{width:100%;background:linear-gradient(135deg,#5b7fff,#8b9fff);border:none;border-radius:10px;padding:14px;color:#fff;font-size:15px;font-weight:500;cursor:pointer;transition:transform 0.2s}
-.submit-btn:active{transform:scale(0.98)}
-.submit-btn:disabled{opacity:0.5;cursor:not-allowed}
+.modal-header h2{font-size:26px;font-weight:600;color:#fff}
+.close-btn{background:rgba(60,65,80,0.9);border:none;color:#aaa;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:20px}
+.setting-item{padding:18px 0;border-bottom:1px solid rgba(91,127,255,0.15)}
+.setting-label{font-size:15px;color:#e0e0e0;margin-bottom:10px;display:block;font-weight:500}
+.quality-select{width:100%;background:rgba(30,35,50,0.9);border:2px solid rgba(91,127,255,0.3);border-radius:10px;padding:12px;color:#e0e0e0;font-size:14px}
+.mode-switch-container{display:flex;gap:12px;margin-top:8px}
+.mode-btn{flex:1;padding:14px;background:rgba(30,35,50,0.6);border:2px solid rgba(91,127,255,0.2);border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;color:#888;transition:all 0.2s;text-align:center}
+.mode-btn.active{background:linear-gradient(135deg,#ff6b00,#ff9500);border-color:#ff9500;color:#000}
+.toggle-switch{position:relative;display:inline-block;width:54px;height:28px}
+.toggle-switch input{opacity:0;width:0;height:0}
+.toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:rgba(60,65,80,0.7);transition:0.3s;border-radius:28px}
+.toggle-slider:before{position:absolute;content:"";height:20px;width:20px;left:4px;bottom:3px;background:#fff;transition:0.3s;border-radius:50%}
+input:checked+.toggle-slider{background:linear-gradient(135deg,#5b7fff,#8b9fff)}
+input:checked+.toggle-slider:before{transform:translateX(26px)}
+.video-item{background:rgba(30,35,50,0.8);border-radius:14px;padding:0;margin-bottom:14px;border:2px solid rgba(91,127,255,0.15);overflow:hidden;position:relative}
+.video-item.selected{border-color:#ff6b00;background:rgba(255,107,0,0.1)}
+.video-thumb{width:100%;height:110px;background:linear-gradient(135deg,#1a1f3a,#16213e);display:flex;align-items:center;justify-content:center;color:#555;font-size:44px}
+.video-info{padding:14px}
+.video-name{font-size:14px;color:#e0e0e0;font-weight:600;margin-bottom:8px}
+.video-meta{font-size:11px;color:#888;display:flex;gap:12px}
+.video-url{font-size:10px;margin-top:6px;font-weight:500}
+.video-url.youtube{color:#ff0000}
+.video-url.tiktok{color:#00f2ea}
+.video-url.facebook{color:#1877f2}
+.video-actions{display:flex;gap:8px;margin-top:10px}
+.action-btn{flex:1;padding:8px;background:rgba(91,127,255,0.2);border:1px solid rgba(91,127,255,0.3);border-radius:8px;cursor:pointer;font-size:12px;color:#5b7fff;font-weight:600}
+.action-btn.in-gallery{background:rgba(0,200,100,0.2);color:#00c864}
+.select-checkbox{position:absolute;top:14px;left:14px;width:24px;height:24px;border-radius:50%;background:rgba(30,35,50,0.9);border:2px solid rgba(91,127,255,0.3);display:none;align-items:center;justify-content:center;cursor:pointer;z-index:10}
+.select-mode .select-checkbox{display:flex}
+.select-checkbox.checked{background:linear-gradient(135deg,#ff6b00,#ff9500);border-color:#ff9500}
+.gallery-toolbar{display:none;position:sticky;top:80px;background:rgba(15,20,35,0.98);padding:16px;margin-bottom:16px;border-radius:14px;border:2px solid rgba(91,127,255,0.3);gap:12px;z-index:10}
+.gallery-toolbar.show{display:flex}
+.toolbar-btn{flex:1;padding:12px;border-radius:10px;border:none;cursor:pointer;font-size:14px;font-weight:600;transition:all 0.2s}
+.toolbar-btn.delete{background:linear-gradient(135deg,#ff3b3b,#ff6b6b);color:#fff}
+.toolbar-btn.cancel{background:rgba(60,65,80,0.9);color:#aaa}
+.stat-row{background:rgba(30,35,50,0.6);padding:16px;margin-bottom:12px;border-radius:12px;border:2px solid rgba(91,127,255,0.2)}
+.stat-platform{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.stat-platform-name{font-size:14px;font-weight:600}
+.stat-platform-name.yt{color:#ff0000}
+.stat-platform-name.tt{color:#00f2ea}
+.stat-platform-name.fb{color:#1877f2}
+.stat-details{display:flex;gap:20px;font-size:12px;color:#888}
+.empty-state{text-align:center;padding:70px 20px;color:#666;font-size:15px}
 </style>
 </head>
 <body>
 <div class="header">
 <button class="settings-btn" onclick="openSettings()">⚙️</button>
 <div class="header-icons">
+<button onclick="openStats()">📊</button>
+<button onclick="openGallery()">🎬</button>
 <button onclick="openHistory()">📋</button>
-<button onclick="openFolder()">📁</button>
 </div>
 </div>
 <div class="title-section">
-<h1>Rick</h1>
-<p>Descarga sin marca de agua</p>
+<h1>RICK <span class="mode-badge" id="modeBadge">TURBO</span></h1>
+<p>DESCARGA ULTRA RÁPIDA SIN MARCA</p>
 </div>
 <div class="input-section">
-<div class="input-wrapper yt" id="inputWrapperYT">
-<label>▶️ YouTube</label>
+<div class="input-wrapper yt">
+<label>▶️ YOUTUBE</label>
 <input type="text" id="urlInputYT" placeholder="https://youtube.com/..." oninput="onInput(0)"/>
 <button class="clear-btn" onclick="clearInput(0)">✕</button>
 </div>
-<div class="input-wrapper tt" id="inputWrapperTT">
-<label>♪ TikTok (sin marca)</label>
+<div class="input-wrapper tt">
+<label>♪ TIKTOK</label>
 <input type="text" id="urlInputTT" placeholder="https://tiktok.com/..." oninput="onInput(1)"/>
 <button class="clear-btn" onclick="clearInput(1)">✕</button>
 </div>
-<div class="input-wrapper fb" id="inputWrapperFB">
-<label>f Facebook</label>
+<div class="input-wrapper fb">
+<label>f FACEBOOK</label>
 <input type="text" id="urlInputFB" placeholder="https://facebook.com/..." oninput="onInput(2)"/>
 <button class="clear-btn" onclick="clearInput(2)">✕</button>
 </div>
@@ -121,203 +147,139 @@ body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;backg
 </div>
 <div class="fab-container">
 <button class="fab clipboard" onclick="pasteClipboard()">📋</button>
+<button class="fab audio" onclick="downloadAudio()">🎧</button>
 <button class="fab download" onclick="startDownload()">⬇</button>
 </div>
 <div class="toast" id="toast"></div>
 <div class="modal" id="settingsModal">
 <div class="modal-content">
 <div class="modal-header">
-<h2>Ajustes</h2>
+<h2>Ajustes ⚙️</h2>
 <button class="close-btn" onclick="closeSettings()">✕</button>
 </div>
-<div class="setting-item" onclick="openDownloads()">
-<div>
-<div class="setting-label">Mis descargas</div>
-<div class="setting-sublabel">Ver videos descargados</div>
-</div>
-<span class="setting-arrow">›</span>
-</div>
-<div class="setting-item" onclick="openSupport()">
-<div>
-<div class="setting-label">Atención al cliente</div>
-<div class="setting-sublabel">Reportar problemas o sugerencias</div>
-</div>
-<span class="setting-arrow">›</span>
-</div>
 <div class="setting-item">
-<div>
 <label class="setting-label">Calidad de video</label>
-<select class="quality-select" id="qualitySelect" onchange="saveQuality()" onclick="event.stopPropagation()">
+<select class="quality-select" id="qualitySelect" onchange="saveQuality()">
 <option value="best">Mejor calidad (HD)</option>
 <option value="1080p">1080p</option>
 <option value="720p">720p</option>
 <option value="480p">480p</option>
-<option value="360p">360p</option>
 </select>
 </div>
+<div class="setting-item">
+<label class="setting-label">Modo de descarga</label>
+<div class="mode-switch-container">
+<div class="mode-btn active" id="modeTurbo" onclick="setMode('turbo')">⚡ TURBO<br><small style="font-size:10px;color:#333">16 fragmentos</small></div>
+<div class="mode-btn" id="modePro" onclick="setMode('pro')">🚀 PRO<br><small style="font-size:10px;color:#333">32 fragmentos</small></div>
+</div>
+</div>
+<div class="setting-item">
+<label class="setting-label">Ubicación</label>
+<div style="color:#888;font-size:13px">📁 DCIM/Rick/ y Galería</div>
+</div>
+<div class="setting-item">
+<label class="setting-label">Descarga automática</label>
+<div style="display:flex;justify-content:space-between;align-items:center">
+<span style="color:#888;font-size:13px">Al copiar enlace</span>
+<label class="toggle-switch">
+<input type="checkbox" id="autoDownloadToggle" onchange="toggleAutoDownload()">
+<span class="toggle-slider"></span>
+</label>
 </div>
 </div>
 </div>
-<div class="modal" id="supportModal">
+</div>
+<div class="modal" id="statsModal">
 <div class="modal-content">
 <div class="modal-header">
-<h2>Atención al cliente</h2>
-<button class="close-btn" onclick="closeSupport()">✕</button>
+<h2>Estadísticas 📊</h2>
+<button class="close-btn" onclick="closeStats()">✕</button>
 </div>
-<div class="form-group">
-<label class="form-label">Tu nombre</label>
-<input type="text" class="form-input" id="supportName" placeholder="Nombre completo">
-</div>
-<div class="form-group">
-<label class="form-label">Tu correo electrónico</label>
-<input type="email" class="form-input" id="supportEmail" placeholder="correo@ejemplo.com">
-</div>
-<div class="form-group">
-<label class="form-label">Asunto</label>
-<input type="text" class="form-input" id="supportSubject" placeholder="¿En qué podemos ayudarte?">
-</div>
-<div class="form-group">
-<label class="form-label">Mensaje</label>
-<textarea class="form-textarea" id="supportMessage" placeholder="Describe tu problema o sugerencia..."></textarea>
-</div>
-<button class="submit-btn" id="supportSubmit" onclick="sendSupportMessage()">Enviar mensaje</button>
-</div>
-</div>
-<div class="modal" id="downloadsModal">
-<div class="modal-content">
-<div class="modal-header">
-<h2>Mis descargas</h2>
-<button class="close-btn" onclick="closeDownloads()">✕</button>
-</div>
-<div class="platform-tabs">
-<button class="platform-tab active" onclick="filterPlatform('Todos')">Todos</button>
-<button class="platform-tab" onclick="filterPlatform('YouTube')">▶️ YouTube</button>
-<button class="platform-tab" onclick="filterPlatform('TikTok')">♪ TikTok</button>
-<button class="platform-tab" onclick="filterPlatform('Facebook')">f Facebook</button>
-</div>
-<div id="downloadsList" class="video-grid"></div>
+<div id="statsContent"></div>
 </div>
 </div>
 <div class="modal" id="historyModal">
 <div class="modal-content">
 <div class="modal-header">
-<h2>Historial</h2>
+<h2>Historial 📋</h2>
 <button class="close-btn" onclick="closeHistory()">✕</button>
 </div>
 <div id="historyList"></div>
 </div>
 </div>
+<div class="modal" id="galleryModal">
+<div class="modal-content">
+<div class="modal-header">
+<h2>Mis Videos 🎬</h2>
+<button class="close-btn" onclick="closeGallery()">✕</button>
+</div>
+<div class="gallery-toolbar" id="galleryToolbar">
+<button class="toolbar-btn cancel" onclick="cancelSelection()">Cancelar</button>
+<button class="toolbar-btn delete" onclick="deleteSelected()">🗑️ Eliminar (<span id="selectedCount">0</span>)</button>
+</div>
+<div style="padding:0 0 16px">
+<button style="width:100%;padding:12px;background:rgba(91,127,255,0.2);border:2px solid rgba(91,127,255,0.3);border-radius:10px;cursor:pointer;font-size:14px;color:#5b7fff;font-weight:600" onclick="toggleSelectMode()">
+<span id="selectModeText">Seleccionar</span>
+</button>
+</div>
+<div id="galleryList"></div>
+</div>
+</div>
 <script>
-const BACKEND_URL='https://rick-backend-9wxe.onrender.com';
-let downloading=false,progressInterval=null,currentFilter='Todos';
+function createSnowflakes(){for(let i=0;i<50;i++){const s=document.createElement('div');s.classList.add('snowflake');s.textContent='❄';s.style.left=Math.random()*100+'vw';s.style.animationDuration=Math.random()*3+2+'s';s.style.opacity=Math.random();s.style.fontSize=Math.random()*10+10+'px';document.body.appendChild(s)}}
+createSnowflakes();
+const colors=['#ff0000','#00ff00','#0000ff','#ffff00','#ff00ff','#00ffff','#ff9500','#5b7fff'];
+document.body.addEventListener('touchstart',createParticles);
+document.body.addEventListener('click',createParticles);
+function createParticles(e){const touch=e.touches?e.touches[0]:e;const x=touch.clientX;const y=touch.clientY;for(let i=0;i<8;i++){const particle=document.createElement('div');particle.classList.add('particle');particle.style.left=x+'px';particle.style.top=y+'px';particle.style.backgroundColor=colors[Math.floor(Math.random()*colors.length)];const angle=Math.random()*Math.PI*2;const distance=20+Math.random()*30;const tx=Math.cos(angle)*distance;const ty=Math.sin(angle)*distance;particle.style.setProperty('--tx',tx+'px');particle.style.setProperty('--ty',ty+'px');document.body.appendChild(particle);setTimeout(()=>particle.remove(),1000)}}
+let downloading=false,progressInterval=null;
 let quality=localStorage.getItem('videoQuality')||'best';
+let downloadMode=localStorage.getItem('downloadMode')||'turbo';
+let autoDownloadEnabled=localStorage.getItem('autoDownload')==='true';
+let lastClipboard='';
+let clipboardInterval=null;
+let selectMode=false;
+let selectedVideos=new Set();
+let allFiles=[];
 document.getElementById('qualitySelect').value=quality;
-const inputs=['urlInputYT','urlInputTT','urlInputFB'];
-const wrappers=['inputWrapperYT','inputWrapperTT','inputWrapperFB'];
-function onInput(i){document.getElementById(wrappers[i]).classList.toggle('has-value',document.getElementById(inputs[i]).value.length>0)}
-function clearInput(i){document.getElementById(inputs[i]).value='';document.getElementById(wrappers[i]).classList.remove('has-value');document.getElementById('cardSection').classList.remove('visible');showToast('Eliminado')}
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)}
+document.getElementById('modeBadge').textContent=downloadMode.toUpperCase();
+document.getElementById('autoDownloadToggle').checked=autoDownloadEnabled;
+if(downloadMode==='pro'){document.getElementById('modeTurbo').classList.remove('active');document.getElementById('modePro').classList.add('active')}
+if(autoDownloadEnabled){startClipboardMonitor()}
+function onInput(i){const inputs=['urlInputYT','urlInputTT','urlInputFB'];const wrappers=['yt','tt','fb'];document.querySelector('.input-wrapper.'+wrappers[i]).classList.toggle('has-value',document.getElementById(inputs[i]).value.length>0)}
+function clearInput(i){const inputs=['urlInputYT','urlInputTT','urlInputFB'];document.getElementById(inputs[i]).value='';onInput(i)}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
 function openSettings(){document.getElementById('settingsModal').classList.add('show')}
 function closeSettings(){document.getElementById('settingsModal').classList.remove('show')}
-function saveQuality(){quality=document.getElementById('qualitySelect').value;localStorage.setItem('videoQuality',quality);showToast('Calidad: '+quality)}
-function openSupport(){closeSettings();document.getElementById('supportModal').classList.add('show')}
-function closeSupport(){document.getElementById('supportModal').classList.remove('show')}
-async function sendSupportMessage(){
-const name=document.getElementById('supportName').value.trim();
-const email=document.getElementById('supportEmail').value.trim();
-const subject=document.getElementById('supportSubject').value.trim();
-const message=document.getElementById('supportMessage').value.trim();
-if(!name||!email||!subject||!message){showToast('Completa todos los campos');return}
-const btn=document.getElementById('supportSubmit');
-btn.disabled=true;btn.textContent='Enviando...';
-try{
-const res=await fetch(BACKEND_URL+'/support',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,subject,message})});
-const data=await res.json();
-if(data.success){showToast('Mensaje enviado ✓');document.getElementById('supportName').value='';document.getElementById('supportEmail').value='';document.getElementById('supportSubject').value='';document.getElementById('supportMessage').value='';setTimeout(()=>closeSupport(),1000)}else{showToast('Error al enviar')}
-}catch(e){showToast('Error de conexión')}
-btn.disabled=false;btn.textContent='Enviar mensaje';
-}
-async function openDownloads(){closeSettings();document.getElementById('downloadsModal').classList.add('show');loadDownloads()}
-function closeDownloads(){document.getElementById('downloadsModal').classList.remove('show')}
-function filterPlatform(platform){currentFilter=platform;document.querySelectorAll('.platform-tab').forEach(tab=>{tab.classList.remove('active');if(tab.textContent.includes(platform)||tab.textContent==='Todos'&&platform==='Todos'){tab.classList.add('active')}});loadDownloads()}
-async function loadDownloads(){
-try{
-const res=await fetch(BACKEND_URL+'/history');
-const history=await res.json();
-const list=document.getElementById('downloadsList');
-let filtered=history;
-if(currentFilter!=='Todos'){filtered=history.filter(item=>item.platform===currentFilter)}
-if(filtered.length===0){list.innerHTML='<div class="empty-state" style="grid-column:1/-1">No hay descargas</div>';return}
-const platformIcons={'YouTube':'▶','TikTok':'♪','Facebook':'f'};
-list.innerHTML=filtered.map(item=>`<div class="video-item"><div class="video-thumb">${platformIcons[item.platform]||'▶'}<div class="video-duration">${item.duration}</div></div><div class="video-info"><div class="video-name" title="${item.title}">${item.title}</div><div class="video-size">${item.size} · ${item.date.split(' ')[0]}</div></div></div>`).join('');
-}catch(e){document.getElementById('downloadsList').innerHTML='<div class="empty-state" style="grid-column:1/-1">Error al cargar</div>'}
-}
-async function openHistory(){
-document.getElementById('historyModal').classList.add('show');
-try{
-const res=await fetch(BACKEND_URL+'/history');
-const history=await res.json();
-const list=document.getElementById('historyList');
-if(history.length===0){list.innerHTML='<div class="empty-state">No hay descargas aún</div>';return}
-list.innerHTML=history.map(item=>`<div style="background:rgba(30,35,45,0.7);border-radius:12px;padding:14px;margin-bottom:12px;border:1px solid rgba(91,127,255,0.1)"><div style="font-size:14px;color:#e0e0e0;font-weight:500;margin-bottom:6px">${item.title}</div><div style="font-size:11px;color:#888;display:flex;gap:12px;flex-wrap:wrap"><span>📁 ${item.size}</span><span>⏱ ${item.duration}</span><span>📅 ${item.date}</span><span>🔹 ${item.platform}</span></div></div>`).join('');
-}catch(e){document.getElementById('historyList').innerHTML='<div class="empty-state">Error</div>'}
-}
+function saveQuality(){quality=document.getElementById('qualitySelect').value;localStorage.setItem('videoQuality',quality);showToast('✅ Calidad: '+quality)}
+function setMode(mode){downloadMode=mode;localStorage.setItem('downloadMode',mode);document.getElementById('modeBadge').textContent=mode.toUpperCase();document.getElementById('modeTurbo').classList.remove('active');document.getElementById('modePro').classList.remove('active');document.getElementById('mode'+mode.charAt(0).toUpperCase()+mode.slice(1)).classList.add('active');showToast(mode==='turbo'?'⚡ TURBO':'🚀 PRO')}
+function toggleAutoDownload(){autoDownloadEnabled=document.getElementById('autoDownloadToggle').checked;localStorage.setItem('autoDownload',autoDownloadEnabled);if(autoDownloadEnabled){startClipboardMonitor();showToast('✅ Descarga automática ON')}else{stopClipboardMonitor();showToast('❌ Descarga automática OFF')}}
+function startClipboardMonitor(){if(clipboardInterval)return;clipboardInterval=setInterval(async()=>{try{const text=await navigator.clipboard.readText();if(text&&text!==lastClipboard&&(text.includes('youtube')||text.includes('tiktok')||text.includes('facebook')||text.includes('youtu.be')||text.includes('fb.')||text.includes('vm.tiktok'))){lastClipboard=text;if(autoDownloadEnabled){await autoDownloadFromClipboard(text)}}}catch(e){}},2000)}
+function stopClipboardMonitor(){if(clipboardInterval){clearInterval(clipboardInterval);clipboardInterval=null}}
+async function autoDownloadFromClipboard(url){const platform=url.includes('youtube')||url.includes('youtu.be')?'YouTube':(url.includes('tiktok')?'TikTok':'Facebook');showToast(`🔗 ${platform} detectado`);await executeDownload(url,quality,false,downloadMode)}
+async function pasteClipboard(){try{const text=await navigator.clipboard.readText();if(text.includes('youtube')||text.includes('youtu.be')){document.getElementById('urlInputYT').value=text;onInput(0);showToast('✅ YouTube')}else if(text.includes('tiktok')){document.getElementById('urlInputTT').value=text;onInput(1);showToast('✅ TikTok')}else if(text.includes('facebook')||text.includes('fb.')){document.getElementById('urlInputFB').value=text;onInput(2);showToast('✅ Facebook')}}catch(e){}}
+async function downloadAudio(){const urls=[document.getElementById('urlInputYT').value.trim(),document.getElementById('urlInputTT').value.trim(),document.getElementById('urlInputFB').value.trim()];const url=urls.find(u=>u);if(!url){showToast('⚠️ Pega enlace');return}await executeDownload(url,quality,true,downloadMode)}
+async function startDownload(){const urls=[document.getElementById('urlInputYT').value.trim(),document.getElementById('urlInputTT').value.trim(),document.getElementById('urlInputFB').value.trim()];const url=urls.find(u=>u);if(!url){showToast('⚠️ Pega enlace');return}if(downloading){showToast('⏳ Descargando...');return}await executeDownload(url,quality,false,downloadMode)}
+async function executeDownload(url,qual,audioOnly,mode){downloading=true;const icons=['▶','♪','f'];const urls=[document.getElementById('urlInputYT').value.trim(),document.getElementById('urlInputTT').value.trim(),document.getElementById('urlInputFB').value.trim()];const idx=urls.indexOf(url);document.getElementById('platformIcon').textContent=audioOnly?'🎧':icons[idx>=0?idx:0];document.getElementById('videoTitle').textContent='Iniciando...';document.getElementById('videoAuthor').textContent='Modo '+mode.toUpperCase();document.getElementById('cardSection').classList.add('visible');document.getElementById('progressBar').style.width='0%';document.getElementById('videoBadge').textContent='0%';progressInterval=setInterval(updateProgress,500);showToast(audioOnly?'🎧 MP3...':'⚡ Descargando...');try{const res=await fetch('http://localhost:5000/download',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url,quality:qual,audio_only:audioOnly,mode})});const data=await res.json();clearInterval(progressInterval);if(data.success){document.getElementById('videoTitle').textContent=data.title;document.getElementById('progressBar').style.width='100%';document.getElementById('videoBadge').textContent='✓';showToast('✅ Descargado');setTimeout(()=>{document.getElementById('cardSection').classList.remove('visible');if(idx>=0)clearInput(idx)},3000)}else{showToast('❌ '+data.error);document.getElementById('cardSection').classList.remove('visible')}}catch(e){clearInterval(progressInterval);showToast('❌ Error');document.getElementById('cardSection').classList.remove('visible')}downloading=false}
+async function updateProgress(){try{const res=await fetch('http://localhost:5000/progress');const data=await res.json();if(data.percent){document.getElementById('progressBar').style.width=data.percent+'%';document.getElementById('videoBadge').textContent=Math.round(data.percent)+'%';document.getElementById('videoAuthor').textContent=data.speed||'Descargando...'}}catch(e){}}
+function cancelDownload(){clearInterval(progressInterval);document.getElementById('cardSection').classList.remove('visible');downloading=false;showToast('❌ Cancelado')}
+async function openStats(){const modal=document.getElementById('statsModal');const content=document.getElementById('statsContent');modal.classList.add('show');content.innerHTML='<div style="text-align:center;padding:40px;color:#888">Cargando...</div>';try{const res=await fetch('http://localhost:5000/stats');const stats=await res.json();const platforms=stats.platforms||{YouTube:0,TikTok:0,Facebook:0};const total=stats.total_downloads||0;const ytMB=(stats.total_mb*(platforms.YouTube/total||0)).toFixed(2);const ttMB=(stats.total_mb*(platforms.TikTok/total||0)).toFixed(2);const fbMB=(stats.total_mb*(platforms.Facebook/total||0)).toFixed(2);const ytPercent=total>0?(platforms.YouTube/total*100):0;const ttPercent=total>0?(platforms.TikTok/total*100):0;const fbPercent=total>0?(platforms.Facebook/total*100):0;content.innerHTML=`<div style="background:rgba(30,35,50,0.7);border-radius:14px;padding:20px;margin-bottom:16px;border:2px solid rgba(91,127,255,0.2)"><div style="font-size:12px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">TOTAL DESCARGAS</div><div style="font-size:42px;font-weight:700;color:#5b7fff;text-shadow:0 2px 8px rgba(91,127,255,0.4)">${total}</div></div><div style="background:rgba(30,35,50,0.7);border-radius:14px;padding:20px;margin-bottom:16px;border:2px solid rgba(91,127,255,0.2)"><div style="font-size:12px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">DATOS TOTALES</div><div style="font-size:36px;font-weight:700;color:#5b7fff">${stats.total_mb.toFixed(2)} MB</div></div><div style="background:rgba(30,35,50,0.7);border-radius:14px;padding:20px;margin-bottom:16px;border:2px solid rgba(91,127,255,0.2)"><div style="font-size:14px;color:#e0e0e0;font-weight:600;margin-bottom:20px">📊 Por Plataforma</div><div class="stat-row"><div class="stat-platform"><span class="stat-platform-name yt">▶️ YouTube</span><span style="font-size:18px;font-weight:700;color:#ff0000">${platforms.YouTube}</span></div><div class="stat-details"><span>💾 ${ytMB} MB</span></div><div style="height:8px;background:rgba(40,40,60,0.9);border-radius:4px;overflow:hidden;margin-top:12px"><div style="height:100%;width:${ytPercent}%;background:linear-gradient(90deg,#ff0000,#ff4444);border-radius:4px;transition:width 0.8s"></div></div></div><div class="stat-row"><div class="stat-platform"><span class="stat-platform-name tt">♪ TikTok</span><span style="font-size:18px;font-weight:700;color:#00f2ea">${platforms.TikTok}</span></div><div class="stat-details"><span>💾 ${ttMB} MB</span></div><div style="height:8px;background:rgba(40,40,60,0.9);border-radius:4px;overflow:hidden;margin-top:12px"><div style="height:100%;width:${ttPercent}%;background:linear-gradient(90deg,#00f2ea,#00fff2);border-radius:4px;transition:width 0.8s"></div></div></div><div class="stat-row"><div class="stat-platform"><span class="stat-platform-name fb">f Facebook</span><span style="font-size:18px;font-weight:700;color:#1877f2">${platforms.Facebook}</span></div><div class="stat-details"><span>💾 ${fbMB} MB</span></div><div style="height:8px;background:rgba(40,40,60,0.9);border-radius:4px;overflow:hidden;margin-top:12px"><div style="height:100%;width:${fbPercent}%;background:linear-gradient(90deg,#1877f2,#4ba3ff);border-radius:4px;transition:width 0.8s"></div></div></div></div><div style="background:rgba(30,35,50,0.7);border-radius:14px;padding:20px;border:2px solid rgba(91,127,255,0.2)"><div style="font-size:12px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">AUDIO MP3</div><div style="font-size:28px;font-weight:700;color:#ff9500">${stats.audio_only||0}</div></div>`}catch(e){content.innerHTML='<div style="text-align:center;padding:40px;color:#ff6b6b">❌ Error</div>'}}
+function closeStats(){document.getElementById('statsModal').classList.remove('show')}
+async function openHistory(){const modal=document.getElementById('historyModal');const list=document.getElementById('historyList');modal.classList.add('show');list.innerHTML='<div style="text-align:center;padding:40px;color:#888">Cargando...</div>';try{const res=await fetch('http://localhost:5000/history');const history=await res.json();if(history.length===0){list.innerHTML='<div class="empty-state">📋 Sin historial</div>';return}list.innerHTML=history.map(item=>`<div class="video-item"><div class="video-thumb">🎬</div><div class="video-info"><div class="video-name">${item.title}</div><div class="video-meta"><span>${item.size}</span><span>${item.platform}</span></div><div class="video-url ${item.platform.toLowerCase()}">${item.original_url||'URL'}</div></div></div>`).join('')}catch(e){list.innerHTML='<div class="empty-state">❌ Error</div>'}}
 function closeHistory(){document.getElementById('historyModal').classList.remove('show')}
-function openFolder(){window.location.href='file:///storage/emulated/0/DCIM/Rick/'}
-async function pasteClipboard(){
-try{
-const text=await navigator.clipboard.readText();
-if(text){
-if(text.includes('youtube')||text.includes('youtu.be')){document.getElementById('urlInputYT').value=text;onInput(0);showToast('YouTube ✓')}
-else if(text.includes('tiktok')||text.includes('vm.tiktok')){document.getElementById('urlInputTT').value=text;onInput(1);showToast('TikTok ✓')}
-else if(text.includes('facebook')||text.includes('fb.')){document.getElementById('urlInputFB').value=text;onInput(2);showToast('Facebook ✓')}
-}
-}catch(e){showToast('Error')}
-}
-async function startDownload(){
-const urls=[document.getElementById('urlInputYT').value.trim(),document.getElementById('urlInputTT').value.trim(),document.getElementById('urlInputFB').value.trim()];
-const url=urls.find(u=>u);
-if(!url){showToast('Pega enlace');return}
-if(downloading){showToast('Descargando...');return}
-downloading=true;
-const platforms=['YouTube','TikTok','Facebook'];
-const icons=['▶','♪','f'];
-const idx=urls.indexOf(url);
-document.getElementById('platformIcon').textContent=icons[idx];
-document.getElementById('cardSection').classList.add('visible');
-progressInterval=setInterval(updateProgress,500);
-showToast('Descarga iniciada');
-try{
-const res=await fetch(BACKEND_URL+'/download',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url,quality})});
-const data=await res.json();
-clearInterval(progressInterval);
-if(data.success){
-document.getElementById('videoTitle').textContent=data.title;
-document.getElementById('progressBar').style.width='100%';
-document.getElementById('videoBadge').textContent='✓';
-if(data.download_url){
-const a=document.createElement('a');
-a.href=BACKEND_URL+data.download_url;
-a.download=data.filename;
-a.click();
-}
-showToast('¡Descargado!')
-}else{showToast('Error');document.getElementById('cardSection').classList.remove('visible')}
-}catch(e){clearInterval(progressInterval);showToast('Error');document.getElementById('cardSection').classList.remove('visible')}
-downloading=false;
-}
-async function updateProgress(){
-try{
-const res=await fetch(BACKEND_URL+'/progress');
-const data=await res.json();
-if(data.percent){
-document.getElementById('progressBar').style.width=data.percent+'%';
-document.getElementById('videoBadge').textContent=data.percent+'%';
-document.getElementById('videoAuthor').textContent=data.speed;
-}
-}catch(e){}
-}
-function cancelDownload(){clearInterval(progressInterval);document.getElementById('cardSection').classList.remove('visible');downloading=false;showToast('Cancelado')}
+function toggleSelectMode(){selectMode=!selectMode;document.getElementById('selectModeText').textContent=selectMode?'Cancelar':'Seleccionar';const galleryList=document.getElementById('galleryList');if(selectMode){galleryList.classList.add('select-mode');document.getElementById('galleryToolbar').classList.add('show')}else{galleryList.classList.remove('select-mode');document.getElementById('galleryToolbar').classList.remove('show');selectedVideos.clear();updateSelectedCount();displayFiles(allFiles)}}
+function toggleVideoSelection(filename){if(!selectMode)return;if(selectedVideos.has(filename)){selectedVideos.delete(filename)}else{selectedVideos.add(filename)}updateSelectedCount();displayFiles(allFiles)}
+function updateSelectedCount(){document.getElementById('selectedCount').textContent=selectedVideos.size}
+function cancelSelection(){selectMode=false;selectedVideos.clear();toggleSelectMode()}
+async function deleteSelected(){if(selectedVideos.size===0){showToast('⚠️ Selecciona videos');return}if(!confirm(`¿Eliminar ${selectedVideos.size} video(s)?`))return;try{for(const filename of selectedVideos){await fetch(`http://localhost:5000/delete/${encodeURIComponent(filename)}`,{method:'DELETE'})}showToast(`✅ ${selectedVideos.size} video(s) eliminado(s)`);selectedVideos.clear();cancelSelection();openGallery()}catch(e){showToast('❌ Error al eliminar')}}
+async function openGallery(){const modal=document.getElementById('galleryModal');const list=document.getElementById('galleryList');modal.classList.add('show');list.innerHTML='<div style="text-align:center;padding:40px;color:#888">Cargando...</div>';try{const res=await fetch('http://localhost:5000/files');allFiles=await res.json();if(!allFiles||allFiles.length===0){list.innerHTML='<div class="empty-state">🎬 Sin videos</div>';return}displayFiles(allFiles)}catch(e){list.innerHTML='<div class="empty-state">❌ Error</div>'}}
+function displayFiles(files){const list=document.getElementById('galleryList');if(files.length===0){list.innerHTML='<div class="empty-state">🎬 Sin videos</div>';return}list.innerHTML=files.map(file=>{const isSelected=selectedVideos.has(file.name);return `<div class="video-item ${isSelected?'selected':''}" onclick="${selectMode?`toggleVideoSelection('${file.name.replace(/'/g,"\\'")}')`:''}" style="${selectMode?'cursor:pointer':''}">
+${selectMode?`<div class="select-checkbox ${isSelected?'checked':''}">${isSelected?'✓':''}</div>`:''}
+<div class="video-thumb">🎬</div><div class="video-info"><div class="video-name">${file.name}</div><div class="video-meta"><span>${file.size}</span><span>${file.platform}</span></div>${!selectMode?`<div class="video-actions"><button class="action-btn" onclick="playVideo('${file.name.replace(/'/g,"\\'")}',event)">▶️ Abrir</button><button class="action-btn ${file.in_gallery?'in-gallery':''}" onclick="copyToGallery('${file.name.replace(/'/g,"\\'")}',event)">${file.in_gallery?'✓ Galería':'📥 A Galería'}</button></div>`:''}</div></div>`}).join('')}
+function closeGallery(){document.getElementById('galleryModal').classList.remove('show');selectMode=false;selectedVideos.clear()}
+function playVideo(filename,event){if(event)event.stopPropagation();window.open(`http://localhost:5000/open/${encodeURIComponent(filename)}`,'_blank')}
+async function copyToGallery(filename,event){if(event)event.stopPropagation();try{await fetch(`http://localhost:5000/copy-to-gallery/${encodeURIComponent(filename)}`,{method:'POST'});showToast('✅ En Galería');openGallery()}catch(e){}}
+setTimeout(async()=>{try{const res=await fetch('http://localhost:5000/test');await res.json();console.log('✅ Backend OK')}catch(e){showToast('❌ Backend offline')}},1000);
 </script>
 </body>
 </html>
