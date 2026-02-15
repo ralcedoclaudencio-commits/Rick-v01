@@ -2,284 +2,213 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="theme-color" content="#0a0e27">
-<title>Rick Pro</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RICK PRO</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0e27;color:#e0e0e0;min-height:100vh;position:relative;overflow-x:hidden;user-select:none}
-body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg,#0a0e27 0%,#1a1f3a 50%,#0f1729 100%);z-index:-2}
-.snowflake{position:fixed;top:-10px;z-index:-1;color:#fff;font-size:1em;opacity:0.8;animation:fall linear infinite;pointer-events:none}
-@keyframes fall{to{transform:translateY(100vh)}}
-.particle{position:fixed;width:4px;height:4px;border-radius:50%;pointer-events:none;z-index:9999;animation:fadeOut 1s ease-out forwards}
-@keyframes fadeOut{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(0)}}
-.header{display:flex;justify-content:space-between;align-items:center;padding:52px 20px 10px}
-.header-icons{display:flex;gap:16px}
-.header-icons button,.settings-btn{background:rgba(30,35,50,0.8);border:1px solid rgba(91,127,255,0.2);cursor:pointer;color:#aaa;font-size:22px;padding:10px;border-radius:12px;transition:all 0.2s;box-shadow:0 4px 12px rgba(0,0,0,0.3)}
-.header-icons button:active,.settings-btn:active{transform:scale(0.95)}
-.title-section{padding:18px 24px 4px;text-align:center}
-.title-section h1{font-size:48px;font-weight:700;background:linear-gradient(135deg,#5b7fff,#8b9fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:3px;animation:glow 3s ease-in-out infinite}
-@keyframes glow{0%,100%{filter:brightness(1)}50%{filter:brightness(1.2)}}
-.title-section p{font-size:13px;color:#888;margin-top:8px}
-.mode-badge{display:inline-block;background:linear-gradient(135deg,#ff6b00,#ff9500);padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;margin-left:8px;color:#000;text-shadow:none}
-.input-section{padding:20px}
-.input-wrapper{position:relative;border:2px solid rgba(91,127,255,0.3);border-radius:14px;padding:14px 44px 14px 16px;background:rgba(20,25,40,0.9);margin-bottom:16px;transition:all 0.3s}
-.input-wrapper:focus-within{border-color:#5b7fff;box-shadow:0 0 24px rgba(91,127,255,0.4)}
-.input-wrapper label{position:absolute;top:-11px;left:12px;background:rgba(10,14,39,0.95);padding:0 8px;font-size:11px;font-weight:600}
-.input-wrapper.yt label{color:#ff0000}
-.input-wrapper.tt label{color:#00f2ea}
-.input-wrapper.fb label{color:#1877f2}
-.input-wrapper input{width:100%;background:0 0;border:none;color:#e0e0e0;font-size:14px;outline:0}
-.clear-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:rgba(60,60,80,0.8);border:none;color:#aaa;width:28px;height:28px;border-radius:50%;cursor:pointer;opacity:0;transition:all 0.2s;font-size:14px}
-.input-wrapper.has-value .clear-btn{opacity:1}
-.card-section{padding:22px 20px 0;display:none}
-.card-section.visible{display:block}
-.video-card{background:rgba(30,35,50,0.95);border-radius:16px;overflow:hidden;border:2px solid rgba(91,127,255,0.3)}
-.thumb-container{position:relative;width:100%;aspect-ratio:16/9;background:linear-gradient(135deg,#1a1f3a,#16213e)}
-.thumb-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#444;font-size:52px}
-.cancel-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:48px;height:48px;border-radius:50%;background:rgba(0,0,0,.8);border:2px solid rgba(255,255,255,.4);color:#fff;font-size:22px;cursor:pointer}
-.badge{position:absolute;bottom:12px;right:12px;background:rgba(0,0,0,.9);padding:6px 12px;border-radius:8px;font-size:12px;color:#ddd;font-weight:600}
-.card-info{padding:14px 16px}
-.card-title{font-size:15px;color:#e0e0e0;font-weight:600;margin-bottom:6px}
-.card-author{font-size:13px;color:#888}
-.progress-bar-bg{height:6px;background:rgba(40,40,60,0.9);border-radius:3px;margin-top:12px;overflow:hidden}
-.progress-bar{height:100%;width:0;background:linear-gradient(90deg,#5b7fff,#8b9fff);border-radius:3px;transition:width .4s}
-.fab-container{position:fixed;bottom:30px;right:20px;display:flex;flex-direction:column;gap:16px;z-index:50}
-.fab{width:56px;height:56px;border-radius:18px;border:none;cursor:pointer;font-size:24px;color:#fff;box-shadow:0 8px 24px rgba(91,127,255,0.6);transition:all 0.2s}
-.fab:active{transform:scale(0.95)}
-.fab.clipboard{background:linear-gradient(135deg,#3a4f8f,#5b7fff)}
-.fab.download{background:linear-gradient(135deg,#5b7fff,#8b9fff)}
-.fab.audio{background:linear-gradient(135deg,#ff6b00,#ff9500)}
-.toast{position:fixed;bottom:110px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(40,45,60,0.98);color:#fff;padding:12px 24px;border-radius:28px;font-size:14px;opacity:0;transition:all .3s;z-index:200;pointer-events:none}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.92);z-index:100;display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:20px 0}
-.modal.show{display:flex}
-.modal-content{background:rgba(15,20,35,0.98);border-radius:24px;padding:28px;width:95%;max-width:520px;border:2px solid rgba(91,127,255,0.3);margin-top:50px;max-height:85vh;overflow-y:auto}
-.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
-.modal-header h2{font-size:26px;font-weight:600;color:#fff}
-.close-btn{background:rgba(60,65,80,0.9);border:none;color:#aaa;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:20px}
-.setting-item{padding:18px 0;border-bottom:1px solid rgba(91,127,255,0.15)}
-.setting-label{font-size:15px;color:#e0e0e0;margin-bottom:10px;display:block;font-weight:500}
-.quality-select{width:100%;background:rgba(30,35,50,0.9);border:2px solid rgba(91,127,255,0.3);border-radius:10px;padding:12px;color:#e0e0e0;font-size:14px}
-.mode-switch-container{display:flex;gap:12px;margin-top:8px}
-.mode-btn{flex:1;padding:14px;background:rgba(30,35,50,0.6);border:2px solid rgba(91,127,255,0.2);border-radius:10px;cursor:pointer;font-size:14px;font-weight:700;color:#888;transition:all 0.2s;text-align:center}
-.mode-btn.active{background:linear-gradient(135deg,#ff6b00,#ff9500);border-color:#ff9500;color:#000}
-.toggle-switch{position:relative;display:inline-block;width:54px;height:28px}
-.toggle-switch input{opacity:0;width:0;height:0}
-.toggle-slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:rgba(60,65,80,0.7);transition:0.3s;border-radius:28px}
-.toggle-slider:before{position:absolute;content:"";height:20px;width:20px;left:4px;bottom:3px;background:#fff;transition:0.3s;border-radius:50%}
-input:checked+.toggle-slider{background:linear-gradient(135deg,#5b7fff,#8b9fff)}
-input:checked+.toggle-slider:before{transform:translateX(26px)}
-.video-item{background:rgba(30,35,50,0.8);border-radius:14px;padding:0;margin-bottom:14px;border:2px solid rgba(91,127,255,0.15);overflow:hidden;position:relative}
-.video-item.selected{border-color:#ff6b00;background:rgba(255,107,0,0.1)}
-.video-thumb{width:100%;height:110px;background:linear-gradient(135deg,#1a1f3a,#16213e);display:flex;align-items:center;justify-content:center;color:#555;font-size:44px}
-.video-info{padding:14px}
-.video-name{font-size:14px;color:#e0e0e0;font-weight:600;margin-bottom:8px}
-.video-meta{font-size:11px;color:#888;display:flex;gap:12px}
-.video-url{font-size:10px;margin-top:6px;font-weight:500}
-.video-url.youtube{color:#ff0000}
-.video-url.tiktok{color:#00f2ea}
-.video-url.facebook{color:#1877f2}
-.video-actions{display:flex;gap:8px;margin-top:10px}
-.action-btn{flex:1;padding:8px;background:rgba(91,127,255,0.2);border:1px solid rgba(91,127,255,0.3);border-radius:8px;cursor:pointer;font-size:12px;color:#5b7fff;font-weight:600}
-.action-btn.in-gallery{background:rgba(0,200,100,0.2);color:#00c864}
-.select-checkbox{position:absolute;top:14px;left:14px;width:24px;height:24px;border-radius:50%;background:rgba(30,35,50,0.9);border:2px solid rgba(91,127,255,0.3);display:none;align-items:center;justify-content:center;cursor:pointer;z-index:10}
-.select-mode .select-checkbox{display:flex}
-.select-checkbox.checked{background:linear-gradient(135deg,#ff6b00,#ff9500);border-color:#ff9500}
-.gallery-toolbar{display:none;position:sticky;top:80px;background:rgba(15,20,35,0.98);padding:16px;margin-bottom:16px;border-radius:14px;border:2px solid rgba(91,127,255,0.3);gap:12px;z-index:10}
-.gallery-toolbar.show{display:flex}
-.toolbar-btn{flex:1;padding:12px;border-radius:10px;border:none;cursor:pointer;font-size:14px;font-weight:600;transition:all 0.2s}
-.toolbar-btn.delete{background:linear-gradient(135deg,#ff3b3b,#ff6b6b);color:#fff}
-.toolbar-btn.cancel{background:rgba(60,65,80,0.9);color:#aaa}
-.stat-row{background:rgba(30,35,50,0.6);padding:16px;margin-bottom:12px;border-radius:12px;border:2px solid rgba(91,127,255,0.2)}
-.stat-platform{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.stat-platform-name{font-size:14px;font-weight:600}
-.stat-platform-name.yt{color:#ff0000}
-.stat-platform-name.tt{color:#00f2ea}
-.stat-platform-name.fb{color:#1877f2}
-.stat-details{display:flex;gap:20px;font-size:12px;color:#888}
-.empty-state{text-align:center;padding:70px 20px;color:#666;font-size:15px}
+body{background:#000;color:#0f0;font-family:'Courier New',monospace;overflow:hidden}
+.splash-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;display:flex;flex-direction:column;justify-content:center;align-items:center;z-index:9999}
+.splash-logo{width:300px;height:150px;border:4px solid;border-radius:20px;display:flex;justify-content:center;align-items:center;animation:border-rainbow 2s linear infinite;box-shadow:0 0 40px currentColor}
+@keyframes border-rainbow{0%{border-color:#ff0000}12.5%{border-color:#0000ff}25%{border-color:#00ff00}37.5%{border-color:#ffff00}50%{border-color:#ff7f00}62.5%{border-color:#9400d3}75%{border-color:#ff1493}87.5%{border-color:#808080}100%{border-color:#ff0000}}
+.splash-text{font-size:48px;font-weight:bold;animation:text-rainbow 2s linear infinite}
+@keyframes text-rainbow{0%{color:#ff0000}12.5%{color:#0000ff}25%{color:#00ff00}37.5%{color:#ffff00}50%{color:#ff7f00}62.5%{color:#9400d3}75%{color:#ff1493}87.5%{color:#808080}100%{color:#ff0000}}
+.splash-progress{width:80%;max-width:400px;height:30px;background:#001100;border:2px solid #0f0;border-radius:10px;margin-top:40px;overflow:hidden}
+.splash-progress-bar{height:100%;background:linear-gradient(90deg,#ff0000,#0000ff,#00ff00,#ffff00,#ff7f00,#9400d3,#ff1493,#808080);width:0%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:bold;font-size:14px;transition:width 0.05s linear}
+.main-content{display:none;padding:10px;overflow-y:auto;height:100vh}
+.header{text-align:center;padding:20px;background:linear-gradient(45deg,#001a00,#003300);border:3px solid #ff6b35;border-radius:10px;margin-bottom:15px;box-shadow:0 0 30px rgba(255,107,53,0.6)}
+h1{font-size:28px;animation:rainbow 3s linear infinite;text-shadow:0 0 20px currentColor}
+@keyframes rainbow{0%{color:#ff0000;text-shadow:0 0 20px #ff0000}14%{color:#ff7f00;text-shadow:0 0 20px #ff7f00}28%{color:#ffff00;text-shadow:0 0 20px #ffff00}42%{color:#00ff00;text-shadow:0 0 20px #00ff00}57%{color:#0000ff;text-shadow:0 0 20px #0000ff}71%{color:#4b0082;text-shadow:0 0 20px #4b0082}85%{color:#9400d3;text-shadow:0 0 20px #9400d3}100%{color:#ff0000;text-shadow:0 0 20px #ff0000}}
+.mode-selector{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0;padding:10px;background:#001100;border:2px solid #0f0;border-radius:8px}
+.mode-btn{padding:15px;background:#001a00;border:2px solid #0f0;border-radius:5px;text-align:center;cursor:pointer;transition:all 0.3s;font-size:16px;font-weight:bold}
+.mode-btn.active{animation:rainbow 3s linear infinite;border-color:currentColor;box-shadow:0 0 20px currentColor}
+.mode-desc{font-size:10px;margin-top:5px;color:#0f0;font-weight:normal}
+.tool-box{background:#001100;border:2px solid #0f0;border-radius:8px;padding:15px;margin:12px 0;box-shadow:0 0 15px rgba(0,255,0,0.3)}
+.tool-box.multicolor{border:3px solid;animation:border-rainbow 3s linear infinite}
+h2{color:#0f0;font-size:16px;margin-bottom:12px;border-bottom:1px solid #0f0;padding-bottom:6px}
+h2.red-border{border-bottom:2px solid #ff0000}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:15px}
+.tab{padding:12px;background:#001a00;border:2px solid #0f0;border-radius:5px;text-align:center;cursor:pointer;transition:all 0.3s;font-size:12px}
+.tab.active{background:#003300;border:3px solid;animation:border-rainbow 3s linear infinite;box-shadow:0 0 15px currentColor}
+.tab-content{display:none}
+.tab-content.active{display:block}
+input{width:100%;background:#000;border:2px solid #0f0;padding:12px;border-radius:5px;margin:8px 0;font-family:'Courier New',monospace;font-size:13px}
+input.facebook{color:#1877f2;border-color:#1877f2}
+input.tiktok{color:#fff;border-color:#fff}
+input.youtube{color:#ff0000;border-color:#ff0000}
+button{background:linear-gradient(135deg,#0f0,#0c0);color:#000;border:none;padding:14px 20px;margin:6px 3px;border-radius:6px;font-weight:bold;font-size:13px;cursor:pointer;transition:all 0.3s;box-shadow:0 0 15px rgba(0,255,0,0.5);width:calc(50% - 6px)}
+button:active{transform:scale(0.95);box-shadow:0 0 25px rgba(0,255,0,0.8)}
+.btn-full{width:calc(100% - 6px)}
+.output{background:#000;border:2px solid #0f0;border-radius:5px;padding:12px;margin:12px 0;min-height:80px;max-height:200px;overflow-y:auto;font-size:12px;line-height:1.6;white-space:pre-wrap;box-shadow:inset 0 0 15px rgba(0,255,0,0.2)}
+.output.large{max-height:400px;min-height:200px}
+.output.xlarge{max-height:600px;min-height:300px}
+.video-item{background:#001a00;border:3px solid;border-radius:8px;padding:12px;margin:10px 0;position:relative;animation:border-rainbow 3s linear infinite;display:flex;gap:10px}
+.video-item.youtube{border-color:#ff0000;box-shadow:0 0 15px rgba(255,0,0,0.5)}
+.video-item.tiktok{border-color:#fff;box-shadow:0 0 15px rgba(255,255,255,0.5)}
+.video-item.facebook{border-color:#1877f2;box-shadow:0 0 15px rgba(24,119,242,0.5)}
+.video-thumbnail{width:120px;height:90px;background:#000;border:2px solid #0f0;border-radius:5px;object-fit:cover;flex-shrink:0}
+.video-details{flex:1}
+.video-title{color:#fff;font-weight:bold;margin-bottom:5px;font-size:12px}
+.video-info{font-size:10px;opacity:0.8;margin:3px 0}
+.video-controls{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap}
+.video-controls button{width:auto;padding:8px 12px;font-size:11px;flex:1;min-width:80px}
+.btn-play{background:linear-gradient(135deg,#00ff00,#00cc00)}
+.btn-delete{background:linear-gradient(135deg,#ff0000,#cc0000)}
+.btn-gallery{background:linear-gradient(135deg,#0066ff,#0044cc)}
+.footer{text-align:center;padding:8px;background:linear-gradient(45deg,#001a00,#003300);border:2px solid #0f0;border-radius:8px;margin-top:15px;box-shadow:0 0 20px rgba(0,255,0,0.3)}
+.footer h3{color:#0f0;font-size:12px;margin-bottom:3px}
+.footer .subtitle{font-size:9px}
+.progress{width:100%;height:25px;background:#001100;border:2px solid #0f0;border-radius:5px;overflow:hidden;margin:10px 0}
+.progress-bar{height:100%;background:linear-gradient(90deg,#ff0000,#ff7f00,#ffff00,#00ff00,#0000ff,#4b0082,#9400d3);width:0%;transition:width 0.3s;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:bold;font-size:11px;text-shadow:1px 1px 2px #000}
+.format-selector{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:10px 0}
+.format-btn{padding:12px;background:#001a00;border:2px solid #0f0;border-radius:5px;text-align:center;cursor:pointer;transition:all 0.3s;font-size:14px;font-weight:bold}
+.format-btn.active{animation:rainbow 3s linear infinite;border-color:currentColor;box-shadow:0 0 15px currentColor}
+.format-desc{font-size:9px;margin-top:3px;color:#0f0;font-weight:normal}
+.quality-selector{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.quality-btn{padding:10px;background:#001a00;border:2px solid;border-radius:5px;text-align:center;cursor:pointer;font-size:11px;font-weight:bold;transition:all 0.3s}
+.quality-btn.high{border-color:#00ff00;color:#00ff00}
+.quality-btn.medium{border-color:#0000ff;color:#0000ff}
+.quality-btn.low{border-color:#ff0000;color:#ff0000}
+.quality-btn.active{box-shadow:0 0 15px currentColor;transform:scale(1.05)}
+.history-item,.download-item{padding:10px;margin:8px 0;background:#000;border-left:5px solid;border-radius:4px;font-size:11px;position:relative}
+.history-item.youtube,.download-item.youtube{border-left-color:#ff0000;background:rgba(255,0,0,0.1)}
+.history-item.tiktok,.download-item.tiktok{border-left-color:#fff;background:rgba(255,255,255,0.1)}
+.history-item.facebook,.download-item.facebook{border-left-color:#1877f2;background:rgba(24,119,242,0.1)}
+.item-delete-btn{position:absolute;top:5px;right:5px;background:#ff0000;color:#fff;border:none;padding:5px 10px;border-radius:3px;font-size:10px;cursor:pointer}
+.terminal-output{background:#000;color:#0f0;font-family:'Courier New',monospace;padding:10px;border:2px solid #0f0;border-radius:5px;max-height:300px;overflow-y:auto;font-size:9px;line-height:1.6}
+.terminal-line{margin:3px 0}
+video{width:100%;max-height:300px;border-radius:5px;margin:10px 0}
+.modal{display:none;position:fixed;z-index:1000;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.95);padding:10px;overflow-y:auto}
+.modal-content{background:#001100;border:3px solid #0f0;border-radius:10px;padding:15px;max-width:95%;margin:20px auto;box-shadow:0 0 30px rgba(0,255,0,0.5)}
+.close{color:#ff0000;float:right;font-size:28px;font-weight:bold;cursor:pointer;line-height:20px}
+.close:hover{color:#ff0000;text-shadow:0 0 10px #ff0000}
 </style>
 </head>
 <body>
+<div class="splash-screen" id="splashScreen">
+<div class="splash-logo">
+<div class="splash-text">RICK</div>
+</div>
+<div class="splash-progress">
+<div class="splash-progress-bar" id="splashProgress">0%</div>
+</div>
+</div>
+
+<div class="main-content" id="mainContent">
 <div class="header">
-<button class="settings-btn" onclick="openSettings()">⚙️</button>
-<div class="header-icons">
-<button onclick="openStats()">📊</button>
-<button onclick="openGallery()">🎬</button>
-<button onclick="openHistory()">📋</button>
+<h1>⚡ RICK PRO ⚡</h1>
+</div>
+
+<div class="mode-selector">
+<div class="mode-btn" id="turboMode" onclick="selectMode('turbo')">
+TURBO
+<div class="mode-desc">Descarga con dependencias normales</div>
+</div>
+<div class="mode-btn" id="proMode" onclick="selectMode('pro')">
+PRO
+<div class="mode-desc">Descarga con dependencia premium</div>
 </div>
 </div>
-<div class="title-section">
-<h1>RICK <span class="mode-badge" id="modeBadge">TURBO</span></h1>
-<p>DESCARGA ULTRA RÁPIDA SIN MARCA</p>
-</div>
-<div class="input-section">
-<div class="input-wrapper yt">
-<label>▶️ YOUTUBE</label>
-<input type="text" id="urlInputYT" placeholder="https://youtube.com/..." oninput="onInput(0)"/>
-<button class="clear-btn" onclick="clearInput(0)">✕</button>
-</div>
-<div class="input-wrapper tt">
-<label>♪ TIKTOK</label>
-<input type="text" id="urlInputTT" placeholder="https://tiktok.com/..." oninput="onInput(1)"/>
-<button class="clear-btn" onclick="clearInput(1)">✕</button>
-</div>
-<div class="input-wrapper fb">
-<label>f FACEBOOK</label>
-<input type="text" id="urlInputFB" placeholder="https://facebook.com/..." oninput="onInput(2)"/>
-<button class="clear-btn" onclick="clearInput(2)">✕</button>
+
+<div class="tool-box">
+<div class="tabs">
+<div class="tab" onclick="cambiarTab('videos')">🎬 Videos</div>
+<div class="tab" onclick="cambiarTab('audio')">🎵 Audio</div>
+<div class="tab" onclick="cambiarTab('estadistica')">📊 Estadística</div>
+<div class="tab" onclick="cambiarTab('historial')">📜 Historial</div>
+<div class="tab" onclick="cambiarTab('descarga')">💾 Descarga</div>
 </div>
 </div>
-<div class="card-section" id="cardSection">
-<div class="video-card">
-<div class="thumb-container">
-<div class="thumb-placeholder" id="platformIcon">▶</div>
-<button class="cancel-btn" onclick="cancelDownload()">✕</button>
-<div class="badge" id="videoBadge">0%</div>
+
+<div class="format-selector">
+<div class="format-btn" id="pm3Btn" onclick="selectFormat('pm3')">
+PM3
+<div class="format-desc">Audio</div>
 </div>
-<div class="card-info">
-<div class="card-title" id="videoTitle">Descargando...</div>
-<div class="card-author" id="videoAuthor">0 MB/s</div>
-<div class="progress-bar-bg"><div class="progress-bar" id="progressBar"></div></div>
+<div class="format-btn" id="pm4Btn" onclick="selectFormat('pm4')">
+PM4
+<div class="format-desc">Video</div>
 </div>
 </div>
+
+<div class="quality-selector">
+<div class="quality-btn high" id="qualityHigh" onclick="selectQuality('high')">
+🟢 ALTA<br><span style="font-size:9px">HD, 1080p, 2K, 4K</span>
 </div>
-<div class="fab-container">
-<button class="fab clipboard" onclick="pasteClipboard()">📋</button>
-<button class="fab audio" onclick="downloadAudio()">🎧</button>
-<button class="fab download" onclick="startDownload()">⬇</button>
+<div class="quality-btn medium" id="qualityMedium" onclick="selectQuality('medium')">
+🔵 MEDIA<br><span style="font-size:9px">SD, 480p, 720p</span>
 </div>
-<div class="toast" id="toast"></div>
-<div class="modal" id="settingsModal">
+<div class="quality-btn low" id="qualityLow" onclick="selectQuality('low')">
+🔴 BAJA<br><span style="font-size:9px">240p, 360p</span>
+</div>
+</div>
+
+<div class="tool-box">
+<h2>🔍 SELECCIONA LA PLATAFORMA</h2>
+<input type="text" id="youtube" class="youtube" placeholder="https://youtube.com/...">
+<input type="text" id="tiktok" class="tiktok" placeholder="https://vt.tiktok.com/...">
+<input type="text" id="facebook" class="facebook" placeholder="https://facebook.com/...">
+<button class="btn-full" onclick="pegarEnlace()">📋 PEGAR ENLACE</button>
+<button class="btn-full" onclick="descargar()">🚀 DESCARGAR</button>
+<div class="progress">
+<div class="progress-bar" id="progressBar">0% - 0 MB</div>
+</div>
+<button class="btn-full" onclick="mostrarCodigo()">💻 MOSTRAR CÓDIGOS YT-DLP</button>
+<div class="terminal-output" id="terminalOutput" style="display:none"></div>
+</div>
+
+<div id="videos" class="tab-content">
+<div class="tool-box multicolor">
+<h2>📹 MIS VIDEOS</h2>
+<div class="output large" id="videosList">Cargando videos...</div>
+</div>
+</div>
+
+<div id="audio" class="tab-content">
+<div class="tool-box multicolor">
+<h2>🎵 MIS AUDIOS</h2>
+<div class="output large" id="audiosList">Cargando audios...</div>
+</div>
+</div>
+
+<div id="estadistica" class="tab-content">
+<div class="tool-box multicolor">
+<h2 class="red-border">📊 ESTADÍSTICAS</h2>
+<div class="output" id="statsContent">Cargando estadísticas...</div>
+</div>
+</div>
+
+<div id="historial" class="tab-content">
+<div class="tool-box multicolor">
+<h2 class="red-border">📜 HISTORIAL</h2>
+<div class="output xlarge" id="historialContent">Cargando historial...</div>
+<button class="btn-full" onclick="limpiarHistorial()">🗑️ LIMPIAR HISTORIAL</button>
+</div>
+</div>
+
+<div id="descarga" class="tab-content">
+<div class="tool-box multicolor">
+<h2 class="red-border">💾 GESTOR DE DESCARGAS</h2>
+<div class="output xlarge" id="galleryContent">Cargando archivos...</div>
+<button class="btn-full" onclick="limpiarDescargas()">🗑️ LIMPIAR DESCARGAS</button>
+</div>
+</div>
+
+<div class="footer">
+<h3>📍 UBICACIÓN</h3>
+<div class="subtitle">DCIM/RICK</div>
+</div>
+
+<div id="videoModal" class="modal">
 <div class="modal-content">
-<div class="modal-header">
-<h2>Ajustes ⚙️</h2>
-<button class="close-btn" onclick="closeSettings()">✕</button>
-</div>
-<div class="setting-item">
-<label class="setting-label">Calidad de video</label>
-<select class="quality-select" id="qualitySelect" onchange="saveQuality()">
-<option value="best">Mejor calidad (HD)</option>
-<option value="1080p">1080p</option>
-<option value="720p">720p</option>
-<option value="480p">480p</option>
-</select>
-</div>
-<div class="setting-item">
-<label class="setting-label">Modo de descarga</label>
-<div class="mode-switch-container">
-<div class="mode-btn active" id="modeTurbo" onclick="setMode('turbo')">⚡ TURBO<br><small style="font-size:10px;color:#333">16 fragmentos</small></div>
-<div class="mode-btn" id="modePro" onclick="setMode('pro')">🚀 PRO<br><small style="font-size:10px;color:#333">32 fragmentos</small></div>
-</div>
-</div>
-<div class="setting-item">
-<label class="setting-label">Ubicación</label>
-<div style="color:#888;font-size:13px">📁 DCIM/Rick/ y Galería</div>
-</div>
-<div class="setting-item">
-<label class="setting-label">Descarga automática</label>
-<div style="display:flex;justify-content:space-between;align-items:center">
-<span style="color:#888;font-size:13px">Al copiar enlace</span>
-<label class="toggle-switch">
-<input type="checkbox" id="autoDownloadToggle" onchange="toggleAutoDownload()">
-<span class="toggle-slider"></span>
-</label>
+<span class="close" onclick="cerrarModal()">&times;</span>
+<h2>▶️ Reproducir</h2>
+<video id="videoPlayer" controls></video>
 </div>
 </div>
 </div>
-</div>
-<div class="modal" id="statsModal">
-<div class="modal-content">
-<div class="modal-header">
-<h2>Estadísticas 📊</h2>
-<button class="close-btn" onclick="closeStats()">✕</button>
-</div>
-<div id="statsContent"></div>
-</div>
-</div>
-<div class="modal" id="historyModal">
-<div class="modal-content">
-<div class="modal-header">
-<h2>Historial 📋</h2>
-<button class="close-btn" onclick="closeHistory()">✕</button>
-</div>
-<div id="historyList"></div>
-</div>
-</div>
-<div class="modal" id="galleryModal">
-<div class="modal-content">
-<div class="modal-header">
-<h2>Mis Videos 🎬</h2>
-<button class="close-btn" onclick="closeGallery()">✕</button>
-</div>
-<div class="gallery-toolbar" id="galleryToolbar">
-<button class="toolbar-btn cancel" onclick="cancelSelection()">Cancelar</button>
-<button class="toolbar-btn delete" onclick="deleteSelected()">🗑️ Eliminar (<span id="selectedCount">0</span>)</button>
-</div>
-<div style="padding:0 0 16px">
-<button style="width:100%;padding:12px;background:rgba(91,127,255,0.2);border:2px solid rgba(91,127,255,0.3);border-radius:10px;cursor:pointer;font-size:14px;color:#5b7fff;font-weight:600" onclick="toggleSelectMode()">
-<span id="selectModeText">Seleccionar</span>
-</button>
-</div>
-<div id="galleryList"></div>
-</div>
-</div>
+
 <script>
-function createSnowflakes(){for(let i=0;i<50;i++){const s=document.createElement('div');s.classList.add('snowflake');s.textContent='❄';s.style.left=Math.random()*100+'vw';s.style.animationDuration=Math.random()*3+2+'s';s.style.opacity=Math.random();s.style.fontSize=Math.random()*10+10+'px';document.body.appendChild(s)}}
-createSnowflakes();
-const colors=['#ff0000','#00ff00','#0000ff','#ffff00','#ff00ff','#00ffff','#ff9500','#5b7fff'];
-document.body.addEventListener('touchstart',createParticles);
-document.body.addEventListener('click',createParticles);
-function createParticles(e){const touch=e.touches?e.touches[0]:e;const x=touch.clientX;const y=touch.clientY;for(let i=0;i<8;i++){const particle=document.createElement('div');particle.classList.add('particle');particle.style.left=x+'px';particle.style.top=y+'px';particle.style.backgroundColor=colors[Math.floor(Math.random()*colors.length)];const angle=Math.random()*Math.PI*2;const distance=20+Math.random()*30;const tx=Math.cos(angle)*distance;const ty=Math.sin(angle)*distance;particle.style.setProperty('--tx',tx+'px');particle.style.setProperty('--ty',ty+'px');document.body.appendChild(particle);setTimeout(()=>particle.remove(),1000)}}
-let downloading=false,progressInterval=null;
-let quality=localStorage.getItem('videoQuality')||'best';
-let downloadMode=localStorage.getItem('downloadMode')||'turbo';
-let autoDownloadEnabled=localStorage.getItem('autoDownload')==='true';
-let lastClipboard='';
-let clipboardInterval=null;
-let selectMode=false;
-let selectedVideos=new Set();
-let allFiles=[];
-document.getElementById('qualitySelect').value=quality;
-document.getElementById('modeBadge').textContent=downloadMode.toUpperCase();
-document.getElementById('autoDownloadToggle').checked=autoDownloadEnabled;
-if(downloadMode==='pro'){document.getElementById('modeTurbo').classList.remove('active');document.getElementById('modePro').classList.add('active')}
-if(autoDownloadEnabled){startClipboardMonitor()}
-function onInput(i){const inputs=['urlInputYT','urlInputTT','urlInputFB'];const wrappers=['yt','tt','fb'];document.querySelector('.input-wrapper.'+wrappers[i]).classList.toggle('has-value',document.getElementById(inputs[i]).value.length>0)}
-function clearInput(i){const inputs=['urlInputYT','urlInputTT','urlInputFB'];document.getElementById(inputs[i]).value='';onInput(i)}
-function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
-function openSettings(){document.getElementById('settingsModal').classList.add('show')}
-function closeSettings(){document.getElementById('settingsModal').classList.remove('show')}
-function saveQuality(){quality=document.getElementById('qualitySelect').value;localStorage.setItem('videoQuality',quality);showToast('✅ Calidad: '+quality)}
-function setMode(mode){downloadMode=mode;localStorage.setItem('downloadMode',mode);document.getElementById('modeBadge').textContent=mode.toUpperCase();document.getElementById('modeTurbo').classList.remove('active');document.getElementById('modePro').classList.remove('active');document.getElementById('mode'+mode.charAt(0).toUpperCase()+mode.slice(1)).classList.add('active');showToast(mode==='turbo'?'⚡ TURBO':'🚀 PRO')}
-function toggleAutoDownload(){autoDownloadEnabled=document.getElementById('autoDownloadToggle').checked;localStorage.setItem('autoDownload',autoDownloadEnabled);if(autoDownloadEnabled){startClipboardMonitor();showToast('✅ Descarga automática ON')}else{stopClipboardMonitor();showToast('❌ Descarga automática OFF')}}
-function startClipboardMonitor(){if(clipboardInterval)return;clipboardInterval=setInterval(async()=>{try{const text=await navigator.clipboard.readText();if(text&&text!==lastClipboard&&(text.includes('youtube')||text.includes('tiktok')||text.includes('facebook')||text.includes('youtu.be')||text.includes('fb.')||text.includes('vm.tiktok'))){lastClipboard=text;if(autoDownloadEnabled){await autoDownloadFromClipboard(text)}}}catch(e){}},2000)}
-function stopClipboardMonitor(){if(clipboardInterval){clearInterval(clipboardInterval);clipboardInterval=null}}
-async function autoDownloadFromClipboard(url){const platform=url.includes('youtube')||url.includes('youtu.be')?'YouTube':(url.includes('tiktok')?'TikTok':'Facebook');showToast(`🔗 ${platform} detectado`);await executeDownload(url,quality,false,downloadMode)}
-async function pasteClipboard(){try{const text=await navigator.clipboard.readText();if(text.includes('youtube')||text.includes('youtu.be')){document.getElementById('urlInputYT').value=text;onInput(0);showToast('✅ YouTube')}else if(text.includes('tiktok')){document.getElementById('urlInputTT').value=text;onInput(1);showToast('✅ TikTok')}else if(text.includes('facebook')||text.includes('fb.')){document.getElementById('urlInputFB').value=text;onInput(2);showToast('✅ Facebook')}}catch(e){}}
-async function downloadAudio(){const urls=[document.getElementById('urlInputYT').value.trim(),document.getElementById('urlInputTT').value.trim(),document.getElementById('urlInputFB').value.trim()];const url=urls.find(u=>u);if(!url){showToast('⚠️ Pega enlace');return}await executeDownload(url,quality,true,downloadMode)}
-async function startDownload(){const urls=[document.getElementById('urlInputYT').value.trim(),document.getElementById('urlInputTT').value.trim(),document.getElementById('urlInputFB').value.trim()];const url=urls.find(u=>u);if(!url){showToast('⚠️ Pega enlace');return}if(downloading){showToast('⏳ Descargando...');return}await executeDownload(url,quality,false,downloadMode)}
-async function executeDownload(url,qual,audioOnly,mode){downloading=true;const icons=['▶','♪','f'];const urls=[document.getElementById('urlInputYT').value.trim(),document.getElementById('urlInputTT').value.trim(),document.getElementById('urlInputFB').value.trim()];const idx=urls.indexOf(url);document.getElementById('platformIcon').textContent=audioOnly?'🎧':icons[idx>=0?idx:0];document.getElementById('videoTitle').textContent='Iniciando...';document.getElementById('videoAuthor').textContent='Modo '+mode.toUpperCase();document.getElementById('cardSection').classList.add('visible');document.getElementById('progressBar').style.width='0%';document.getElementById('videoBadge').textContent='0%';progressInterval=setInterval(updateProgress,500);showToast(audioOnly?'🎧 MP3...':'⚡ Descargando...');try{const res=await fetch('http://localhost:5000/download',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url,quality:qual,audio_only:audioOnly,mode})});const data=await res.json();clearInterval(progressInterval);if(data.success){document.getElementById('videoTitle').textContent=data.title;document.getElementById('progressBar').style.width='100%';document.getElementById('videoBadge').textContent='✓';showToast('✅ Descargado');setTimeout(()=>{document.getElementById('cardSection').classList.remove('visible');if(idx>=0)clearInput(idx)},3000)}else{showToast('❌ '+data.error);document.getElementById('cardSection').classList.remove('visible')}}catch(e){clearInterval(progressInterval);showToast('❌ Error');document.getElementById('cardSection').classList.remove('visible')}downloading=false}
-async function updateProgress(){try{const res=await fetch('http://localhost:5000/progress');const data=await res.json();if(data.percent){document.getElementById('progressBar').style.width=data.percent+'%';document.getElementById('videoBadge').textContent=Math.round(data.percent)+'%';document.getElementById('videoAuthor').textContent=data.speed||'Descargando...'}}catch(e){}}
-function cancelDownload(){clearInterval(progressInterval);document.getElementById('cardSection').classList.remove('visible');downloading=false;showToast('❌ Cancelado')}
-async function openStats(){const modal=document.getElementById('statsModal');const content=document.getElementById('statsContent');modal.classList.add('show');content.innerHTML='<div style="text-align:center;padding:40px;color:#888">Cargando...</div>';try{const res=await fetch('http://localhost:5000/stats');const stats=await res.json();const platforms=stats.platforms||{YouTube:0,TikTok:0,Facebook:0};const total=stats.total_downloads||0;const ytMB=(stats.total_mb*(platforms.YouTube/total||0)).toFixed(2);const ttMB=(stats.total_mb*(platforms.TikTok/total||0)).toFixed(2);const fbMB=(stats.total_mb*(platforms.Facebook/total||0)).toFixed(2);const ytPercent=total>0?(platforms.YouTube/total*100):0;const ttPercent=total>0?(platforms.TikTok/total*100):0;const fbPercent=total>0?(platforms.Facebook/total*100):0;content.innerHTML=`<div style="background:rgba(30,35,50,0.7);border-radius:14px;padding:20px;margin-bottom:16px;border:2px solid rgba(91,127,255,0.2)"><div style="font-size:12px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">TOTAL DESCARGAS</div><div style="font-size:42px;font-weight:700;color:#5b7fff;text-shadow:0 2px 8px rgba(91,127,255,0.4)">${total}</div></div><div style="background:rgba(30,35,50,0.7);border-radius:14px;padding:20px;margin-bottom:16px;border:2px solid rgba(91,127,255,0.2)"><div style="font-size:12px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">DATOS TOTALES</div><div style="font-size:36px;font-weight:700;color:#5b7fff">${stats.total_mb.toFixed(2)} MB</div></div><div style="background:rgba(30,35,50,0.7);border-radius:14px;padding:20px;margin-bottom:16px;border:2px solid rgba(91,127,255,0.2)"><div style="font-size:14px;color:#e0e0e0;font-weight:600;margin-bottom:20px">📊 Por Plataforma</div><div class="stat-row"><div class="stat-platform"><span class="stat-platform-name yt">▶️ YouTube</span><span style="font-size:18px;font-weight:700;color:#ff0000">${platforms.YouTube}</span></div><div class="stat-details"><span>💾 ${ytMB} MB</span></div><div style="height:8px;background:rgba(40,40,60,0.9);border-radius:4px;overflow:hidden;margin-top:12px"><div style="height:100%;width:${ytPercent}%;background:linear-gradient(90deg,#ff0000,#ff4444);border-radius:4px;transition:width 0.8s"></div></div></div><div class="stat-row"><div class="stat-platform"><span class="stat-platform-name tt">♪ TikTok</span><span style="font-size:18px;font-weight:700;color:#00f2ea">${platforms.TikTok}</span></div><div class="stat-details"><span>💾 ${ttMB} MB</span></div><div style="height:8px;background:rgba(40,40,60,0.9);border-radius:4px;overflow:hidden;margin-top:12px"><div style="height:100%;width:${ttPercent}%;background:linear-gradient(90deg,#00f2ea,#00fff2);border-radius:4px;transition:width 0.8s"></div></div></div><div class="stat-row"><div class="stat-platform"><span class="stat-platform-name fb">f Facebook</span><span style="font-size:18px;font-weight:700;color:#1877f2">${platforms.Facebook}</span></div><div class="stat-details"><span>💾 ${fbMB} MB</span></div><div style="height:8px;background:rgba(40,40,60,0.9);border-radius:4px;overflow:hidden;margin-top:12px"><div style="height:100%;width:${fbPercent}%;background:linear-gradient(90deg,#1877f2,#4ba3ff);border-radius:4px;transition:width 0.8s"></div></div></div></div><div style="background:rgba(30,35,50,0.7);border-radius:14px;padding:20px;border:2px solid rgba(91,127,255,0.2)"><div style="font-size:12px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">AUDIO MP3</div><div style="font-size:28px;font-weight:700;color:#ff9500">${stats.audio_only||0}</div></div>`}catch(e){content.innerHTML='<div style="text-align:center;padding:40px;color:#ff6b6b">❌ Error</div>'}}
-function closeStats(){document.getElementById('statsModal').classList.remove('show')}
-async function openHistory(){const modal=document.getElementById('historyModal');const list=document.getElementById('historyList');modal.classList.add('show');list.innerHTML='<div style="text-align:center;padding:40px;color:#888">Cargando...</div>';try{const res=await fetch('http://localhost:5000/history');const history=await res.json();if(history.length===0){list.innerHTML='<div class="empty-state">📋 Sin historial</div>';return}list.innerHTML=history.map(item=>`<div class="video-item"><div class="video-thumb">🎬</div><div class="video-info"><div class="video-name">${item.title}</div><div class="video-meta"><span>${item.size}</span><span>${item.platform}</span></div><div class="video-url ${item.platform.toLowerCase()}">${item.original_url||'URL'}</div></div></div>`).join('')}catch(e){list.innerHTML='<div class="empty-state">❌ Error</div>'}}
-function closeHistory(){document.getElementById('historyModal').classList.remove('show')}
-function toggleSelectMode(){selectMode=!selectMode;document.getElementById('selectModeText').textContent=selectMode?'Cancelar':'Seleccionar';const galleryList=document.getElementById('galleryList');if(selectMode){galleryList.classList.add('select-mode');document.getElementById('galleryToolbar').classList.add('show')}else{galleryList.classList.remove('select-mode');document.getElementById('galleryToolbar').classList.remove('show');selectedVideos.clear();updateSelectedCount();displayFiles(allFiles)}}
-function toggleVideoSelection(filename){if(!selectMode)return;if(selectedVideos.has(filename)){selectedVideos.delete(filename)}else{selectedVideos.add(filename)}updateSelectedCount();displayFiles(allFiles)}
-function updateSelectedCount(){document.getElementById('selectedCount').textContent=selectedVideos.size}
-function cancelSelection(){selectMode=false;selectedVideos.clear();toggleSelectMode()}
-async function deleteSelected(){if(selectedVideos.size===0){showToast('⚠️ Selecciona videos');return}if(!confirm(`¿Eliminar ${selectedVideos.size} video(s)?`))return;try{for(const filename of selectedVideos){await fetch(`http://localhost:5000/delete/${encodeURIComponent(filename)}`,{method:'DELETE'})}showToast(`✅ ${selectedVideos.size} video(s) eliminado(s)`);selectedVideos.clear();cancelSelection();openGallery()}catch(e){showToast('❌ Error al eliminar')}}
-async function openGallery(){const modal=document.getElementById('galleryModal');const list=document.getElementById('galleryList');modal.classList.add('show');list.innerHTML='<div style="text-align:center;padding:40px;color:#888">Cargando...</div>';try{const res=await fetch('http://localhost:5000/files');allFiles=await res.json();if(!allFiles||allFiles.length===0){list.innerHTML='<div class="empty-state">🎬 Sin videos</div>';return}displayFiles(allFiles)}catch(e){list.innerHTML='<div class="empty-state">❌ Error</div>'}}
-function displayFiles(files){const list=document.getElementById('galleryList');if(files.length===0){list.innerHTML='<div class="empty-state">🎬 Sin videos</div>';return}list.innerHTML=files.map(file=>{const isSelected=selectedVideos.has(file.name);return `<div class="video-item ${isSelected?'selected':''}" onclick="${selectMode?`toggleVideoSelection('${file.name.replace(/'/g,"\\'")}')`:''}" style="${selectMode?'cursor:pointer':''}">
-${selectMode?`<div class="select-checkbox ${isSelected?'checked':''}">${isSelected?'✓':''}</div>`:''}
-<div class="video-thumb">🎬</div><div class="video-info"><div class="video-name">${file.name}</div><div class="video-meta"><span>${file.size}</span><span>${file.platform}</span></div>${!selectMode?`<div class="video-actions"><button class="action-btn" onclick="playVideo('${file.name.replace(/'/g,"\\'")}',event)">▶️ Abrir</button><button class="action-btn ${file.in_gallery?'in-gallery':''}" onclick="copyToGallery('${file.name.replace(/'/g,"\\'")}',event)">${file.in_gallery?'✓ Galería':'📥 A Galería'}</button></div>`:''}</div></div>`}).join('')}
-function closeGallery(){document.getElementById('galleryModal').classList.remove('show');selectMode=false;selectedVideos.clear()}
-function playVideo(filename,event){if(event)event.stopPropagation();window.open(`http://localhost:5000/open/${encodeURIComponent(filename)}`,'_blank')}
-async function copyToGallery(filename,event){if(event)event.stopPropagation();try{await fetch(`http://localhost:5000/copy-to-gallery/${encodeURIComponent(filename)}`,{method:'POST'});showToast('✅ En Galería');openGallery()}catch(e){}}
-setTimeout(async()=>{try{const res=await fetch('http://localhost:5000/test');await res.json();console.log('✅ Backend OK')}catch(e){showToast('❌ Backend offline')}},1000);
+let currentMode='turbo';let currentFormat='pm4';let currentQuality='high';let terminalLines=[];let downloadInfo={};window.onload=function(){let progress=0;const interval=setInterval(()=>{progress+=2;document.getElementById('splashProgress').style.width=progress+'%';document.getElementById('splashProgress').textContent=progress+'%';if(progress>=100){clearInterval(interval);setTimeout(()=>{document.getElementById('splashScreen').style.display='none';document.getElementById('mainContent').style.display='block'},200)}},40)};function selectMode(mode){currentMode=mode;document.querySelectorAll('.mode-btn').forEach(el=>el.classList.remove('active'));document.getElementById(mode+'Mode').classList.add('active')}function selectFormat(format){currentFormat=format;document.querySelectorAll('.format-btn').forEach(el=>el.classList.remove('active'));document.getElementById(format+'Btn').classList.add('active')}function selectQuality(quality){currentQuality=quality;document.querySelectorAll('.quality-btn').forEach(el=>el.classList.remove('active'));document.getElementById('quality'+quality.charAt(0).toUpperCase()+quality.slice(1)).classList.add('active')}function cambiarTab(tab){document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));document.querySelectorAll('.tab').forEach(el=>el.classList.remove('active'));document.getElementById(tab).classList.add('active');event.target.classList.add('active');if(tab==='estadistica')cargarEstadisticas();if(tab==='historial')cargarHistorial();if(tab==='descarga')cargarGaleria();if(tab==='videos')cargarVideos();if(tab==='audio')cargarAudios()}async function pegarEnlace(){try{const text=await navigator.clipboard.readText();if(text.includes('youtube.com')||text.includes('youtu.be')){document.getElementById('youtube').value=text}else if(text.includes('tiktok')){document.getElementById('tiktok').value=text}else if(text.includes('facebook')){document.getElementById('facebook').value=text}else{alert('⚠️ URL no reconocida')}}catch(e){alert('⚠️ Error al pegar')}}async function descargar(){const yt=document.getElementById('youtube').value.trim();const tt=document.getElementById('tiktok').value.trim();const fb=document.getElementById('facebook').value.trim();const url=yt||tt||fb;if(!url){alert('⚠️ Pega un enlace');return}const progressBar=document.getElementById('progressBar');const audio_only=currentFormat==='pm3';const qualityMap={high:'best',medium:'720p',low:'480p'};const quality=qualityMap[currentQuality];terminalLines=[];downloadInfo={url,title:'Obteniendo información...',date:new Date().toLocaleString('es-ES')};addTerminalLine('═══════════════════════════════════════');addTerminalLine('🚀 INICIANDO DESCARGA');addTerminalLine('═══════════════════════════════════════');addTerminalLine('📋 URL: '+url);addTerminalLine('⚙️  MODO: '+currentMode.toUpperCase());addTerminalLine('🎯 FORMATO: '+(audio_only?'AUDIO MP3':'VIDEO MP4'));addTerminalLine('🎬 CALIDAD: '+currentQuality.toUpperCase());addTerminalLine('📅 FECHA: '+downloadInfo.date);addTerminalLine('═══════════════════════════════════════');addTerminalLine('⏳ Descargando...');try{const res=await fetch('http://localhost:5000/download',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url,quality,audio_only,mode:currentMode})});const monitorear=setInterval(async()=>{try{const prog=await fetch('http://localhost:5000/progress');const data=await prog.json();if(data.percent){const mb=data.downloaded_mb||0;progressBar.style.width=data.percent+'%';progressBar.textContent=Math.floor(data.percent)+'% - '+mb.toFixed(1)+' MB';if(data.speed)addTerminalLine('⚡ Velocidad: '+data.speed)}}catch(e){}},500);const data=await res.json();clearInterval(monitorear);if(data.success){addTerminalLine('═══════════════════════════════════════');addTerminalLine('✅ ¡DESCARGA COMPLETADA!');addTerminalLine('═══════════════════════════════════════');addTerminalLine('📝 Título: '+data.title);addTerminalLine('📁 Ubicación: /storage/emulated/0/DCIM/Rick/');addTerminalLine('✨ Archivo listo para reproducir');addTerminalLine('═══════════════════════════════════════');progressBar.style.width='100%';progressBar.textContent='100% - Completado'}else{addTerminalLine('═══════════════════════════════════════');addTerminalLine('❌ ERROR EN DESCARGA');addTerminalLine('═══════════════════════════════════════');addTerminalLine('⚠️  '+data.error);addTerminalLine('═══════════════════════════════════════');alert('❌ Error: '+data.error)}}catch(e){addTerminalLine('═══════════════════════════════════════');addTerminalLine('❌ ERROR DE CONEXIÓN');addTerminalLine('═══════════════════════════════════════');addTerminalLine('⚠️  No se pudo conectar al servidor');addTerminalLine('═══════════════════════════════════════');alert('❌ Error de conexión')}}function addTerminalLine(line){terminalLines.push(line);if(terminalLines.length>50)terminalLines.shift()}function mostrarCodigo(){const term=document.getElementById('terminalOutput');if(term.style.display==='none'){term.style.display='block';term.innerHTML=terminalLines.map(l=>'<div class="terminal-line">'+l+'</div>').join('');term.scrollTop=term.scrollHeight}else{term.style.display='none'}}async function cargarVideos(){try{const res=await fetch('http://localhost:5000/files?type=video');const files=await res.json();const videosList=document.getElementById('videosList');if(files.length===0){videosList.innerHTML='No hay videos descargados';return}let html='';files.forEach(file=>{const platform=file.platform.toLowerCase();const emoji=platform==='youtube'?'🔴':platform==='tiktok'?'⚪':'🔵';html+=`<div class="video-item ${platform}"><img src="http://localhost:5000/thumbnail/${encodeURIComponent(file.name)}" class="video-thumbnail" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%2290%22%3E%3Crect fill=%22%23000%22 width=%22120%22 height=%2290%22/%3E%3Ctext fill=%22%230f0%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2240%22%3E${emoji}%3C/text%3E%3C/svg%3E"><div class="video-details"><div class="video-title">${emoji} ${file.name}</div><div class="video-info">📦 ${file.size} • 📅 ${file.date} • 📱 ${file.platform}</div><div class="video-info">${file.in_gallery?'✅ En Galería':''}</div><div class="video-controls"><button class="btn-play" onclick="reproducirVideo('${encodeURIComponent(file.name)}')">▶️ Ver</button>${!file.in_gallery?`<button class="btn-gallery" onclick="copiarGaleria('${encodeURIComponent(file.name)}')">📁 Galería</button>`:''}<button class="btn-delete" onclick="eliminarVideo('${encodeURIComponent(file.name)}')">🗑️ Eliminar</button></div></div></div>`});videosList.innerHTML=html}catch(e){document.getElementById('videosList').innerHTML='Error al cargar videos'}}async function cargarAudios(){try{const res=await fetch('http://localhost:5000/files?type=audio');const files=await res.json();const audiosList=document.getElementById('audiosList');if(files.length===0){audiosList.innerHTML='No hay audios descargados';return}let html='';files.forEach(file=>{const platform=file.platform.toLowerCase();const emoji=platform==='youtube'?'🔴':platform==='tiktok'?'⚪':'🔵';html+=`<div class="video-item ${platform}"><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='90'%3E%3Crect fill='%23000' width='120' height='90'/%3E%3Ctext fill='%230f0' x='50%25' y='50%25' text-anchor='middle' dy='.3em' font-size='40'%3E🎵%3C/text%3E%3C/svg%3E" class="video-thumbnail"><div class="video-details"><div class="video-title">${emoji} ${file.name}</div><div class="video-info">📦 ${file.size} • 📅 ${file.date} • 📱 ${file.platform}</div><div class="video-controls"><button class="btn-play" onclick="reproducirAudio('${encodeURIComponent(file.name)}')">▶️ Reproducir</button><button class="btn-delete" onclick="eliminarVideo('${encodeURIComponent(file.name)}')">🗑️ Eliminar</button></div></div></div>`});audiosList.innerHTML=html}catch(e){document.getElementById('audiosList').innerHTML='Error al cargar audios'}}async function reproducirVideo(filename){try{const modal=document.getElementById('videoModal');const player=document.getElementById('videoPlayer');player.src='http://localhost:5000/open/'+filename;modal.style.display='block'}catch(e){alert('Error al reproducir')}}async function reproducirAudio(filename){reproducirVideo(filename)}function cerrarModal(){document.getElementById('videoModal').style.display='none';document.getElementById('videoPlayer').pause();document.getElementById('videoPlayer').src=''}async function copiarGaleria(filename){try{const res=await fetch('http://localhost:5000/copy-to-gallery/'+filename,{method:'POST'});const data=await res.json();if(data.success){alert('✅ Copiado a Galería');cargarVideos()}}catch(e){alert('Error')}}async function eliminarVideo(filename){if(!confirm('¿Eliminar este archivo?'))return;try{const res=await fetch('http://localhost:5000/delete/'+filename,{method:'DELETE'});const data=await res.json();if(data.success){alert('✅ Archivo eliminado');cargarVideos();cargarAudios();cargarEstadisticas()}}catch(e){alert('Error')}}async function cargarEstadisticas(){try{const res=await fetch('http://localhost:5000/stats');const stats=await res.json();document.getElementById('statsContent').innerHTML=`Total descargas: ${stats.total_downloads}\nYouTube: ${stats.platforms.YouTube}\nTikTok: ${stats.platforms.TikTok}\nFacebook: ${stats.platforms.Facebook}\n\nTotal MB: ${stats.total_mb.toFixed(2)} MB\nAudio MP3: ${stats.audio_only}`}catch(e){}}async function eliminarHistorialItem(index){if(!confirm('¿Eliminar este elemento del historial?'))return;try{const res=await fetch('http://localhost:5000/delete-history-item',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({index})});const data=await res.json();if(data.success){cargarHistorial()}}catch(e){alert('Error')}}async function cargarHistorial(){try{const res=await fetch('http://localhost:5000/history');const hist=await res.json();let html='';hist.forEach((h,index)=>{const platform=h.platform.toLowerCase();const emoji=platform==='youtube'?'🔴':platform==='tiktok'?'⚪':'🔵';html+=`<div class="history-item ${platform}"><button class="item-delete-btn" onclick="eliminarHistorialItem(${index})">✖</button>${emoji} [${h.date}] ${h.platform} - ${h.title} ✓</div>`});document.getElementById('historialContent').innerHTML=html||'Historial vacío'}catch(e){}}async function eliminarDescargaItem(filename){if(!confirm('¿Eliminar este elemento de descargas?'))return;try{const res=await fetch('http://localhost:5000/delete-download-info/'+encodeURIComponent(filename),{method:'DELETE'});const data=await res.json();if(data.success){cargarGaleria()}}catch(e){alert('Error')}}async function cargarGaleria(){try{const res=await fetch('http://localhost:5000/files');const files=await res.json();let html='';files.forEach(f=>{const platform=f.platform.toLowerCase();const emoji=platform==='youtube'?'🔴':platform==='tiktok'?'⚪':'🔵';html+=`<div class="download-item ${platform}"><button class="item-delete-btn" onclick="eliminarDescargaItem('${f.name}')">✖</button>${emoji} 📥 ${f.name}\n   📦 ${f.size} • 📱 ${f.platform}\n   📅 ${f.date}\n   ${f.in_gallery?'✅ En Galería':''}</div>`});document.getElementById('galleryContent').innerHTML=html||'Sin descargas'}catch(e){}}async function limpiarHistorial(){if(!confirm('¿Limpiar todo el historial?'))return;try{const res=await fetch('http://localhost:5000/clear-history',{method:'POST'});if(res.ok){alert('✅ Historial limpiado');cargarHistorial()}}catch(e){alert('Error')}}async function limpiarDescargas(){if(!confirm('¿Limpiar información de descargas?'))return;try{const res=await fetch('http://localhost:5000/clear-downloads-info',{method:'POST'});if(res.ok){alert('✅ Información limpiada');cargarGaleria()}}catch(e){alert('Error')}}selectMode('turbo');selectFormat('pm4');selectQuality('high')
 </script>
 </body>
-</html>
+  </html>
