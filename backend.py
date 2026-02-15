@@ -8,43 +8,19 @@ import shutil
 import subprocess
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 DOWNLOAD_DIR = '/storage/emulated/0/DCIM/Rick'
 GALLERY_DIR = '/storage/emulated/0/DCIM/Camera'
 HISTORY_FILE = '/storage/emulated/0/DCIM/Rick/history.json'
-THUMBNAILS_DIR = '/storage/emulated/0/DCIM/Rick/thumbnails'
 STATS_FILE = '/storage/emulated/0/DCIM/Rick/stats.json'
-SETTINGS_FILE = '/storage/emulated/0/DCIM/Rick/settings.json'
+THUMB_DIR = '/storage/emulated/0/DCIM/Rick/.thumbnails'
 
 os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 os.makedirs(GALLERY_DIR, exist_ok=True)
-os.makedirs(THUMBNAILS_DIR, exist_ok=True)
+os.makedirs(THUMB_DIR, exist_ok=True)
 
 download_progress = {}
-
-def auto_update_ytdlp():
-    try:
-        print("🔄 Actualizando yt-dlp...")
-        subprocess.run(['pip', 'install', '--upgrade', 'yt-dlp', '--break-system-packages'], 
-                      capture_output=True, timeout=30)
-        version = subprocess.run(['yt-dlp', '--version'], capture_output=True, text=True)
-        print(f"✅ yt-dlp: {version.stdout.strip()}")
-    except Exception as e:
-        print(f"⚠️ No se actualizó: {e}")
-
-def load_settings():
-    if os.path.exists(SETTINGS_FILE):
-        try:
-            with open(SETTINGS_FILE, 'r') as f:
-                return json.load(f)
-        except:
-            pass
-    return {'auto_download': False, 'download_mode': 'turbo'}
-
-def save_settings(settings):
-    with open(SETTINGS_FILE, 'w') as f:
-        json.dump(settings, f, indent=2)
 
 def load_stats():
     if os.path.exists(STATS_FILE):
@@ -85,13 +61,14 @@ def save_history(item):
     with open(HISTORY_FILE, 'w') as f:
         json.dump(history, f, indent=2)
 
-def extract_thumbnail(video_path, output_path):
+def generate_thumbnail(video_path, filename):
     try:
-        cmd = f'ffmpeg -i "{video_path}" -ss 00:00:01 -vframes 1 -vf scale=320:-1 "{output_path}" -y 2>/dev/null'
-        subprocess.run(cmd, shell=True, timeout=10)
-        return os.path.exists(output_path)
+        thumb_path = os.path.join(THUMB_DIR, filename + '.jpg')
+        cmd = ['ffmpeg', '-i', video_path, '-ss', '00:00:01', '-vframes', '1', '-vf', 'scale=120:90', thumb_path, '-y']
+        subprocess.run(cmd, capture_output=True, timeout=10)
+        return thumb_path if os.path.exists(thumb_path) else None
     except:
-        return False
+        return None
 
 def progress_hook(d):
     if d['status'] == 'downloading':
@@ -102,6 +79,8 @@ def progress_hook(d):
             speed = d.get('speed', 0)
             download_progress['percent'] = round(percent, 1)
             download_progress['speed'] = f"{speed/1024/1024:.2f} MB/s" if speed else "0 MB/s"
+            download_progress['downloaded_mb'] = round(downloaded/1024/1024, 1)
+            download_progress['total_mb'] = round(total/1024/1024, 1)
     elif d['status'] == 'finished':
         download_progress['percent'] = 100
 
@@ -116,8 +95,19 @@ def download():
     if not url:
         return jsonify({'error': 'No URL'}), 400
 
+    if 'youtube.com' in url.lower() or 'youtu.be' in url.lower():
+        platform = 'YouTube'
+    elif 'tiktok' in url.lower():
+        platform = 'TikTok'
+    elif 'facebook' in url.lower():
+        platform = 'Facebook'
+    else:
+        platform = 'Unknown'
+
     download_progress.clear()
     download_progress['percent'] = 0
+    download_progress['downloaded_mb'] = 0
+    download_progress['total_mb'] = 0
 
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
     fragments = 32 if mode == 'pro' else 16
@@ -131,26 +121,15 @@ def download():
         'fragment_retries': 20,
     }
 
-    if 'tiktok' in url.lower() or 'vm.tiktok' in url.lower():
-        print(f"🎵 Descargando TikTok: {url}")
+    if platform == 'TikTok':
         ydl_opts.update({
             'format': 'best',
             'http_headers': {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
                 'Referer': 'https://www.tiktok.com/',
-                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-                'Accept-Language': 'en-US,en;q=0.5',
-                'Accept-Encoding': 'gzip, deflate',
-                'Connection': 'keep-alive',
-            },
-            'extractor_args': {
-                'tiktok': {
-                    'api_hostname': 'api16-normal-c-useast1a.tiktokv.com',
-                }
             },
         })
-    elif 'youtube' in url.lower() or 'youtu.be' in url.lower():
-        print(f"▶️ Descargando YouTube: {url}")
+    elif platform == 'YouTube':
         format_map = {
             'best': 'bestvideo[ext=mp4][height<=1080]+bestaudio[ext=m4a]/best[ext=mp4]/best',
             '1080p': 'bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/best[height<=1080]',
@@ -159,18 +138,10 @@ def download():
         }
         ydl_opts.update({
             'format': format_map.get(quality, format_map['best']),
-            'extractor_args': {'youtube': {'player_client': ['android', 'web']}},
             'concurrent_fragment_downloads': fragments,
-            'http_chunk_size': 10485760,
         })
-    elif 'facebook' in url.lower() or 'fb.' in url.lower():
-        print(f"f Descargando Facebook: {url}")
-        ydl_opts.update({
-            'format': 'best',
-            'http_headers': {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-            },
-        })
+    elif platform == 'Facebook':
+        ydl_opts.update({'format': 'best'})
     
     if audio_only:
         ydl_opts['format'] = 'bestaudio/best'
@@ -189,25 +160,19 @@ def download():
             filepath = os.path.join(DOWNLOAD_DIR, filename)
             
             if not os.path.exists(filepath):
-                possible_files = [
-                    os.path.join(DOWNLOAD_DIR, f"{title}_{timestamp}.mp4"),
-                    os.path.join(DOWNLOAD_DIR, f"{title}_{timestamp}.webm"),
-                    os.path.join(DOWNLOAD_DIR, f"{title}_{timestamp}.mkv"),
-                ]
-                for pf in possible_files:
-                    if os.path.exists(pf):
-                        filepath = pf
-                        filename = os.path.basename(pf)
+                possible = [f"{title}_{timestamp}.mp4", f"{title}_{timestamp}.webm", f"{title}_{timestamp}.mkv"]
+                for pf in possible:
+                    full_path = os.path.join(DOWNLOAD_DIR, pf)
+                    if os.path.exists(full_path):
+                        filepath = full_path
+                        filename = pf
                         break
             
             if not os.path.exists(filepath):
                 return jsonify({'error': 'Archivo no encontrado'}), 500
             
             if not audio_only:
-                thumbnail_name = f"{filename}.jpg"
-                thumbnail_path = os.path.join(THUMBNAILS_DIR, thumbnail_name)
-                extract_thumbnail(filepath, thumbnail_path)
-                
+                generate_thumbnail(filepath, filename)
                 try:
                     gallery_path = os.path.join(GALLERY_DIR, filename)
                     shutil.copy2(filepath, gallery_path)
@@ -215,20 +180,15 @@ def download():
                 except:
                     in_gallery = False
             else:
-                thumbnail_path = ''
                 in_gallery = False
             
             filesize = os.path.getsize(filepath)
-            duration = info.get('duration', 0)
-            
-            platform = 'YouTube' if 'youtube' in url or 'youtu.be' in url else ('TikTok' if 'tiktok' in url else 'Facebook')
             update_stats(platform, filesize / (1024*1024), audio_only)
 
             history_item = {
                 'title': title,
                 'filename': filename,
                 'filepath': filepath,
-                'thumbnail': thumbnail_path,
                 'url': url,
                 'original_url': url,
                 'size': f"{filesize / (1024*1024):.2f} MB",
@@ -239,36 +199,30 @@ def download():
             }
             save_history(history_item)
 
-            print(f"✅ Descargado: {filename}")
             return jsonify({'success': True, 'title': title, 'filename': filename})
             
     except Exception as e:
-        error_msg = str(e)
-        print(f"❌ Error: {error_msg}")
-        
-        if 'private' in error_msg.lower() or 'not available' in error_msg.lower():
-            return jsonify({'error': 'Video privado o no disponible'}), 500
-        elif 'geo' in error_msg.lower():
-            return jsonify({'error': 'Video bloqueado en tu región'}), 500
-        else:
-            return jsonify({'error': f'Error: {error_msg[:100]}'}), 500
+        return jsonify({'error': str(e)[:100]}), 500
+
+@app.route('/thumbnail/<path:filename>')
+def get_thumbnail(filename):
+    thumb_path = os.path.join(THUMB_DIR, filename + '.jpg')
+    if os.path.exists(thumb_path):
+        return send_file(thumb_path, mimetype='image/jpeg')
+    return '', 404
 
 @app.route('/copy-to-gallery/<path:filename>', methods=['POST'])
 def copy_to_gallery(filename):
     try:
         filepath = os.path.join(DOWNLOAD_DIR, filename)
         if os.path.exists(filepath):
-            gallery_path = os.path.join(GALLERY_DIR, filename)
-            shutil.copy2(filepath, gallery_path)
-            
+            shutil.copy2(filepath, os.path.join(GALLERY_DIR, filename))
             history = load_history()
             for item in history:
                 if item.get('filename') == filename:
                     item['in_gallery'] = True
-                    break
             with open(HISTORY_FILE, 'w') as f:
                 json.dump(history, f, indent=2)
-            
             return jsonify({'success': True})
         return jsonify({'error': 'Not found'}), 404
     except Exception as e:
@@ -279,14 +233,55 @@ def delete_file(filename):
     try:
         filepath = os.path.join(DOWNLOAD_DIR, filename)
         if os.path.exists(filepath):
+            filesize = os.path.getsize(filepath) / (1024*1024)
             os.remove(filepath)
             
-            thumbnail_path = os.path.join(THUMBNAILS_DIR, f"{filename}.jpg")
-            if os.path.exists(thumbnail_path):
-                os.remove(thumbnail_path)
+            thumb_path = os.path.join(THUMB_DIR, filename + '.jpg')
+            if os.path.exists(thumb_path):
+                os.remove(thumb_path)
+            
+            gallery_path = os.path.join(GALLERY_DIR, filename)
+            if os.path.exists(gallery_path):
+                os.remove(gallery_path)
+            
+            stats = load_stats()
+            stats['total_downloads'] = max(0, stats['total_downloads'] - 1)
+            stats['total_mb'] = max(0, stats['total_mb'] - filesize)
+            save_stats(stats)
+            
+            history = load_history()
+            history = [h for h in history if h.get('filename') != filename]
+            with open(HISTORY_FILE, 'w') as f:
+                json.dump(history, f, indent=2)
             
             return jsonify({'success': True})
         return jsonify({'error': 'Not found'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/delete-history-item', methods=['POST'])
+def delete_history_item():
+    try:
+        data = request.json
+        index = data.get('index')
+        history = load_history()
+        if 0 <= index < len(history):
+            history.pop(index)
+            with open(HISTORY_FILE, 'w') as f:
+                json.dump(history, f, indent=2)
+            return jsonify({'success': True})
+        return jsonify({'error': 'Invalid index'}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/delete-download-info/<path:filename>', methods=['DELETE'])
+def delete_download_info(filename):
+    try:
+        history = load_history()
+        history = [h for h in history if h.get('filename') != filename]
+        with open(HISTORY_FILE, 'w') as f:
+            json.dump(history, f, indent=2)
+        return jsonify({'success': True})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
@@ -302,65 +297,45 @@ def get_history():
 def get_stats():
     return jsonify(load_stats())
 
-@app.route('/settings', methods=['GET'])
-def get_settings():
-    return jsonify(load_settings())
-
-@app.route('/settings', methods=['POST'])
-def update_settings():
-    data = request.json
-    settings = load_settings()
-    settings.update(data)
-    save_settings(settings)
-    return jsonify({'success': True})
-
-@app.route('/history/delete/<int:index>', methods=['DELETE'])
-def delete_history(index):
-    history = load_history()
-    if 0 <= index < len(history):
-        history.pop(index)
-        with open(HISTORY_FILE, 'w') as f:
-            json.dump(history, f)
-        return jsonify({'success': True})
-    return jsonify({'error': 'Error'}), 400
-
-@app.route('/history/clear', methods=['DELETE'])
-def clear_history():
-    with open(HISTORY_FILE, 'w') as f:
-        json.dump([], f)
-    return jsonify({'success': True})
-
 @app.route('/files')
 def get_files():
     try:
+        file_type = request.args.get('type', 'all')
         files = []
+        history = load_history()
+        
         if os.path.exists(DOWNLOAD_DIR):
             for filename in os.listdir(DOWNLOAD_DIR):
-                if filename.endswith(('.mp4', '.mp3', '.webm', '.mkv')) and not filename.endswith('.json'):
-                    filepath = os.path.join(DOWNLOAD_DIR, filename)
-                    if os.path.isfile(filepath):
-                        stat = os.stat(filepath)
-                        thumbnail_name = f"{filename}.jpg"
-                        thumbnail_path = os.path.join(THUMBNAILS_DIR, thumbnail_name)
-                        
-                        platform = 'YouTube' if 'youtube' in filename.lower() else ('TikTok' if 'tiktok' in filename.lower() else 'Facebook')
-                        
-                        history = load_history()
-                        in_gallery = False
-                        for item in history:
-                            if item.get('filename') == filename:
-                                in_gallery = item.get('in_gallery', False)
-                                break
-                        
-                        files.append({
-                            'name': filename,
-                            'size': f"{stat.st_size / (1024*1024):.2f} MB",
-                            'date': datetime.fromtimestamp(stat.st_mtime).strftime('%Y-%m-%d %H:%M'),
-                            'thumbnail': thumbnail_path if os.path.exists(thumbnail_path) else '',
-                            'type': 'Audio' if filename.endswith('.mp3') else 'Video',
-                            'platform': platform,
-                            'in_gallery': in_gallery
-                        })
+                is_video = filename.endswith(('.mp4', '.webm', '.mkv'))
+                is_audio = filename.endswith('.mp3')
+                
+                if file_type == 'video' and not is_video:
+                    continue
+                if file_type == 'audio' and not is_audio:
+                    continue
+                if file_type == 'all' and not (is_video or is_audio):
+                    continue
+                
+                filepath = os.path.join(DOWNLOAD_DIR, filename)
+                if os.path.isfile(filepath):
+                    stat = os.stat(filepath)
+                    
+                    platform = 'Unknown'
+                    in_gallery = False
+                    for item in history:
+                        if item.get('filename') == filename:
+                            platform = item.get('platform', 'Unknown')
+                            in_gallery = item.get('in_gallery', False)
+                            break
+                    
+                    files.append({
+                        'name': filename,
+                        'size': f"{stat.st_size / (1024*1024):.2f} MB",
+                        'date': datetime.fromtimestamp(stat.st_mtime).strftime('%Y-%m-%d %H:%M'),
+                        'type': 'Audio' if is_audio else 'Video',
+                        'platform': platform,
+                        'in_gallery': in_gallery
+                    })
         files.sort(key=lambda x: x['date'], reverse=True)
         return jsonify(files)
     except:
@@ -373,22 +348,35 @@ def open_file(filename):
         return send_file(filepath)
     return jsonify({'error': 'Not found'}), 404
 
-@app.route('/thumbnail/<path:filename>')
-def get_thumbnail(filename):
-    thumbnail_path = os.path.join(THUMBNAILS_DIR, filename)
-    if os.path.exists(thumbnail_path):
-        return send_file(thumbnail_path)
-    return jsonify({'error': 'Not found'}), 404
+@app.route('/clear-history', methods=['POST'])
+def clear_history():
+    try:
+        with open(HISTORY_FILE, 'w') as f:
+            json.dump([], f)
+        return jsonify({'success': True})
+    except:
+        return jsonify({'error': 'Failed'}), 500
+
+@app.route('/clear-downloads-info', methods=['POST'])
+def clear_downloads_info():
+    try:
+        with open(HISTORY_FILE, 'w') as f:
+            json.dump([], f)
+        return jsonify({'success': True})
+    except:
+        return jsonify({'error': 'Failed'}), 500
 
 @app.route('/test')
 def test():
-    return jsonify({'status': 'OK', 'version': 'RICK_V2_FINAL'})
+    return jsonify({'status': 'OK'})
 
 if __name__ == '__main__':
-    print("\n" + "="*60)
-    print("🚀 RICK DOWNLOADER V2.0 - INICIANDO")
-    print("="*60)
-    auto_update_ytdlp()
-    print("\n✅ Backend: http://localhost:5000")
-    print("="*60 + "\n")
+    print("\n"+"="*50)
+    print("🚀 RICK PRO V3.0 - SISTEMA INICIADO")
+    print("="*50)
+    print(f"📁 Directorio: {DOWNLOAD_DIR}")
+    print(f"📸 Galería: {GALLERY_DIR}")
+    print("🌐 Servidor: http://localhost:5000")
+    print("🖥️  Web: http://localhost:8080")
+    print("="*50+"\n")
     app.run(host='0.0.0.0', port=5000, debug=False, threaded=True)
